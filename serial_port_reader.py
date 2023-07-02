@@ -5,6 +5,15 @@ import serial.tools.list_ports
 from serial import Serial, SerialException
 
 
+def parse_board(message:bytes):
+    message = message.strip()
+    message = message[:64]
+    message = message.decode('utf-8')
+    chess_board_visualization = ""
+    for row in range(0,64,8):
+        chess_board_visualization += message[row:row+8] + "\n"
+    return chess_board_visualization
+
 
 if __name__ == "__main__":
     baudrate: int = 115200
@@ -23,7 +32,10 @@ if __name__ == "__main__":
     while True:
         resp: bytes = device.readline()
         print(resp.strip())
-        time.sleep(0.1)
-        device.write(bytearray(str(i), "ascii"))
-        i += 1
+        if 'board:' in str(resp.strip()):
+            time.sleep(0.1)
+            resp: bytes = device.readline()
+            print("board:\n",str(parse_board(resp)))
+        else:    
+            print('failed to read, retrying...')
         time.sleep(0.1)

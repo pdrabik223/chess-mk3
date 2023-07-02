@@ -1,23 +1,21 @@
 #include <Arduino.h>
+#include <Board.h>
 
-// put function declarations here:
-int myFunction(int, int);
+char str_representation_of_a_board[64];
+Board board(true);
 
 void setup()
 {
   Serial.begin(115200);
   Serial.println("Ready for input");
+  board.to_string(str_representation_of_a_board);
 }
 
 void loop()
 {
-  char c;
 
-  if (Serial.available() > 0)
-  {
-    c = Serial.read();
-
-    Serial.print("Char = ");
-    Serial.println(c, DEC);
-  }
+  Serial.println("board:");
+  delay(1000);
+  Serial.println(str_representation_of_a_board);
+  delay(1000);
 }
