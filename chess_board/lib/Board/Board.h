@@ -446,6 +446,8 @@ public:
             new_pos = construct_coord(x, pos_y);
             if (get_color(data[new_pos]) != rook_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int x = pos_x - 1; x >= 0; x--)
         {
@@ -453,6 +455,8 @@ public:
             new_pos = construct_coord(x, pos_y);
             if (get_color(data[new_pos]) != rook_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int y = pos_y + 1; y < 8; y++)
         {
@@ -460,6 +464,8 @@ public:
             new_pos = construct_coord(pos_x, y);
             if (get_color(data[new_pos]) != rook_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int y = pos_y - 1; y >= 0; y--)
         {
@@ -467,6 +473,8 @@ public:
             new_pos = construct_coord(pos_x, y);
             if (get_color(data[new_pos]) != rook_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         return number_of_moves;
     }
@@ -496,6 +504,8 @@ public:
             new_pos = construct_coord(x, y);
             if (get_color(data[new_pos]) != bishop_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int x = pos_x + 1, y = pos_y - 1; x < 8 && y >= 0; x++, y--)
         {
@@ -503,6 +513,8 @@ public:
             new_pos = construct_coord(x, y);
             if (get_color(data[new_pos]) != bishop_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int x = pos_x - 1, y = pos_y - 1; x >= 0 && y >= 0; x--, y--)
         {
@@ -510,6 +522,8 @@ public:
             new_pos = construct_coord(x, y);
             if (get_color(data[new_pos]) != bishop_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int x = pos_x - 1, y = pos_y + 1; x >= 0 && y < 8; x--, y++)
         {
@@ -517,6 +531,8 @@ public:
             new_pos = construct_coord(x, y);
             if (get_color(data[new_pos]) != bishop_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
 
         return number_of_moves;
@@ -547,6 +563,8 @@ public:
             new_pos = construct_coord(x, y);
             if (get_color(data[new_pos]) != queen_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int x = pos_x + 1, y = pos_y - 1; x < 8 && y >= 0; x++, y--)
         {
@@ -554,6 +572,8 @@ public:
             new_pos = construct_coord(x, y);
             if (get_color(data[new_pos]) != queen_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int x = pos_x - 1, y = pos_y - 1; x >= 0 && y >= 0; x--, y--)
         {
@@ -561,6 +581,8 @@ public:
             new_pos = construct_coord(x, y);
             if (get_color(data[new_pos]) != queen_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int x = pos_x - 1, y = pos_y + 1; x >= 0 && y < 8; x--, y++)
         {
@@ -568,6 +590,8 @@ public:
             new_pos = construct_coord(x, y);
             if (get_color(data[new_pos]) != queen_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int x = pos_x + 1; x < 8; x++)
         {
@@ -575,6 +599,8 @@ public:
             new_pos = construct_coord(x, pos_y);
             if (get_color(data[new_pos]) != queen_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int x = pos_x - 1; x >= 0; x--)
         {
@@ -582,6 +608,8 @@ public:
             new_pos = construct_coord(x, pos_y);
             if (get_color(data[new_pos]) != queen_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int y = pos_y + 1; y < 8; y++)
         {
@@ -589,6 +617,8 @@ public:
             new_pos = construct_coord(pos_x, y);
             if (get_color(data[new_pos]) != queen_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         for (int y = pos_y - 1; y >= 0; y--)
         {
@@ -596,6 +626,8 @@ public:
             new_pos = construct_coord(pos_x, y);
             if (get_color(data[new_pos]) != queen_color)
                 moveset[number_of_moves++] = new_pos;
+            else
+                break;
         }
         return number_of_moves;
     }
