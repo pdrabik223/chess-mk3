@@ -148,21 +148,15 @@ public:
         return coord % 8;
     }
 
-    /// @brief generates legal moveset for pawn at position pos
+    /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
-    /// @param moveset stores all possible move positions
+    /// @param moveset stores all legal possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_pawn(int pos, int *moveset)
+    int generate_legal_moveset_pawn(int pos, int *moveset, int number_of_moves = 0)
     {
-        if (data[pos] != b_pawn && data[pos] != w_pawn)
-            return 0;
 
-        int number_of_moves = 0;
-
-        Color pawn_color = white;
-
-        if (data[pos] == b_pawn)
-            pawn_color = black;
+        Color pawn_color = get_color(data[pos]);
 
         int pos_x = pos / width;
         int pos_y = pos % width;
@@ -205,21 +199,15 @@ public:
         return number_of_moves;
     }
 
-    /// @brief generates legal moveset for pawn at position pos
+    /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
-    /// @param moveset stores all possible move positions
+    /// @param moveset stores all legal possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_knight(int pos, int *moveset)
+    int generate_legal_moveset_knight(int pos, int *moveset, int number_of_moves = 0)
     {
-        if (data[pos] != b_knight && data[pos] != w_knight)
-            return 0;
 
-        int number_of_moves = 0;
-
-        Color knight_color = white;
-
-        if (data[pos] == b_knight)
-            knight_color = black;
+        Color knight_color = get_color(data[pos]);
 
         int pos_x = pos / width;
         int pos_y = pos % width;
@@ -317,21 +305,15 @@ public:
 
         return number_of_moves;
     }
-    /// @brief generates legal moveset for pawn at position pos
+    /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
-    /// @param moveset stores all possible move positions
+    /// @param moveset stores all legal possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_king(int pos, int *moveset)
+    int generate_legal_moveset_king(const int pos, int *moveset, int number_of_moves = 0)
     {
-        if (data[pos] != b_king && data[pos] != w_king)
-            return 0;
 
-        int number_of_moves = 0;
-
-        Color king_color = white;
-
-        if (data[pos] == b_king)
-            king_color = black;
+        Color king_color = get_color(data[pos]);
 
         int pos_x = pos / width;
         int pos_y = pos % width;
@@ -422,18 +404,12 @@ public:
     /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
     /// @param moveset stores all legal possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_rook(int pos, int *moveset)
+    int generate_legal_moveset_rook(const int pos, int *moveset, int number_of_moves = 0)
     {
-        if (data[pos] != b_rook && data[pos] != w_rook)
-            return 0;
 
-        int number_of_moves = 0;
-
-        Color rook_color = white;
-
-        if (data[pos] == b_rook)
-            rook_color = black;
+        Color rook_color = get_color(data[pos]);
 
         int pos_x = pos / width;
         int pos_y = pos % width;
@@ -481,18 +457,12 @@ public:
     /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
     /// @param moveset stores all legal possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_bishop(int pos, int *moveset)
+    int generate_legal_moveset_bishop(const int pos, int *moveset, int number_of_moves = 0)
     {
-        if (data[pos] != b_bishop && data[pos] != w_bishop)
-            return 0;
 
-        int number_of_moves = 0;
-
-        Color bishop_color = white;
-
-        if (data[pos] == b_bishop)
-            bishop_color = black;
+        Color bishop_color = get_color(data[pos]);
 
         int pos_x = pos / width;
         int pos_y = pos % width;
@@ -540,94 +510,52 @@ public:
     /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
     /// @param moveset stores all legal possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_queen(int pos, int *moveset)
+    int generate_legal_moveset_queen(const int pos, int *moveset, int number_of_moves = 0)
     {
-        if (data[pos] != b_queen && data[pos] != w_queen)
-            return 0;
+        // queen is basically rook & bishop at once, so why even bother?
+        number_of_moves += generate_legal_moveset_rook(pos, moveset, number_of_moves);
+        number_of_moves += generate_legal_moveset_bishop(pos, moveset, number_of_moves);
 
+        return number_of_moves;
+    }
+
+    /// @brief generates legal moveset for a given color
+    /// @param color color for which all moves possible will be generated
+    /// @param moveset stores all legal possible move positions
+    /// @return Number of legal moves
+    int generate_legal_moveset_for_color(Color color, int *moveset)
+    {
         int number_of_moves = 0;
+        for (short i = 0; i < 64; i++)
+        {
+            if (get_color(data[i]) == color)
+            {
+                if (data[i] == b_pawn || data[i] == w_pawn)
 
-        Color queen_color = white;
+                    number_of_moves += generate_legal_moveset_pawn(i, moveset, number_of_moves);
 
-        if (data[pos] == b_queen)
-            queen_color = black;
+                else if (data[i] == b_knight || data[i] == w_knight)
 
-        int pos_x = pos / width;
-        int pos_y = pos % width;
+                    number_of_moves += generate_legal_moveset_knight(i, moveset, number_of_moves);
 
-        int new_pos;
-        for (int x = pos_x + 1, y = pos_y + 1; x < 8 && y < 8; x++, y++)
-        {
-            // going down and right starting with position just to the right and down from the queen
-            new_pos = construct_coord(x, y);
-            if (get_color(data[new_pos]) != queen_color)
-                moveset[number_of_moves++] = new_pos;
-            else
-                break;
-        }
-        for (int x = pos_x + 1, y = pos_y - 1; x < 8 && y >= 0; x++, y--)
-        {
-            // going down and left starting with position just to the left and down from the queen
-            new_pos = construct_coord(x, y);
-            if (get_color(data[new_pos]) != queen_color)
-                moveset[number_of_moves++] = new_pos;
-            else
-                break;
-        }
-        for (int x = pos_x - 1, y = pos_y - 1; x >= 0 && y >= 0; x--, y--)
-        {
-            // going up and left starting with position just to the left and up from the queen
-            new_pos = construct_coord(x, y);
-            if (get_color(data[new_pos]) != queen_color)
-                moveset[number_of_moves++] = new_pos;
-            else
-                break;
-        }
-        for (int x = pos_x - 1, y = pos_y + 1; x >= 0 && y < 8; x--, y++)
-        {
-            // going up and right starting with position just to the right and up from the queen
-            new_pos = construct_coord(x, y);
-            if (get_color(data[new_pos]) != queen_color)
-                moveset[number_of_moves++] = new_pos;
-            else
-                break;
-        }
-        for (int x = pos_x + 1; x < 8; x++)
-        {
-            // going down starting with position just under the queen
-            new_pos = construct_coord(x, pos_y);
-            if (get_color(data[new_pos]) != queen_color)
-                moveset[number_of_moves++] = new_pos;
-            else
-                break;
-        }
-        for (int x = pos_x - 1; x >= 0; x--)
-        {
-            // going up starting with position just above the queen
-            new_pos = construct_coord(x, pos_y);
-            if (get_color(data[new_pos]) != queen_color)
-                moveset[number_of_moves++] = new_pos;
-            else
-                break;
-        }
-        for (int y = pos_y + 1; y < 8; y++)
-        {
-            // going right starting with position just to the right from the queen
-            new_pos = construct_coord(pos_x, y);
-            if (get_color(data[new_pos]) != queen_color)
-                moveset[number_of_moves++] = new_pos;
-            else
-                break;
-        }
-        for (int y = pos_y - 1; y >= 0; y--)
-        {
-            // going left starting with position just to the left from the queen
-            new_pos = construct_coord(pos_x, y);
-            if (get_color(data[new_pos]) != queen_color)
-                moveset[number_of_moves++] = new_pos;
-            else
-                break;
+                else if (data[i] == b_king || data[i] == w_king)
+
+                    number_of_moves += generate_legal_moveset_king(i, moveset, number_of_moves);
+
+                else if (data[i] == b_rook || data[i] == w_rook)
+
+                    number_of_moves += generate_legal_moveset_rook(i, moveset, number_of_moves);
+
+                else if (data[i] == b_bishop || data[i] == b_bishop)
+
+                    number_of_moves += generate_legal_moveset_bishop(i, moveset, number_of_moves);
+
+                else if (data[i] == b_queen || data[i] == b_queen)
+
+                    number_of_moves += generate_legal_moveset_queen(i, moveset, number_of_moves);
+            }
         }
         return number_of_moves;
     }
