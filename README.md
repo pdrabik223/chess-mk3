@@ -26,3 +26,5 @@ With this project I would like to do something different: restrain myself as muc
 
 ## Parts
 [Hall sensors](https://allegro.pl/oferta/czujnik-halla-a3144-wykrywacz-metali-prad-13664145165)
+[Hall sensors, local vendor](https://allegro.pl/moje-allegro/zakupy/kupione/977733b3-8f03-3715-b591-6c909b9daa5f)
+[Led strip](https://allegro.pl/oferta/adresowalna-tasma-led-ws2812b-30d-m-ip20-cyfrowa-10583524893)

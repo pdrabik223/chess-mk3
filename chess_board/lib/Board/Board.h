@@ -121,12 +121,61 @@ public:
         data[54] = w_pawn;
         data[55] = w_pawn;
     }
+    void from_string(const String board_str)
+    {
 
-    void to_string(char *board)
+        for (int i = 0; i < 64; i++)
+        {
+            switch (board_str[i])
+            {
+            case 'e':
+                data[i] = empty;
+                break;
+            case 'p':
+                data[i] = w_pawn;
+                break;
+            case 'n':
+                data[i] = w_knight;
+                break;
+            case 'b':
+                data[i] = w_bishop;
+                break;
+            case 'r':
+                data[i] = w_rook;
+                break;
+            case 'q':
+                data[i] = w_queen;
+                break;
+            case 'k':
+                data[i] = w_king;
+                break;
+            case 'P':
+                data[i] = b_pawn;
+                break;
+            case 'N':
+                data[i] = b_knight;
+                break;
+            case 'B':
+                data[i] = b_bishop;
+                break;
+            case 'R':
+                data[i] = b_rook;
+                break;
+            case 'Q':
+                data[i] = b_queen;
+                break;
+            case 'K':
+                data[i] = b_king;
+                break;
+            }
+        }
+    }
+
+    void to_string(char *board_str)
     {
         for (short i = 0; i < 64; i++)
         {
-            board[i] = symbol_encoding[data[i]];
+            board_str[i] = symbol_encoding[data[i]];
         }
     }
     void move(int prev_pos, int new_pos)
@@ -525,36 +574,62 @@ public:
     /// @param color color for which all moves possible will be generated
     /// @param moveset stores all legal possible move positions
     /// @return Number of legal moves
-    int generate_legal_moveset_for_color(Color color, int *moveset)
+    int generate_legal_moveset_for_color(Color color, int *starting_positions, int *moveset)
     {
         int number_of_moves = 0;
+        int new_no_moves;
         for (short i = 0; i < 64; i++)
         {
             if (get_color(data[i]) == color)
             {
                 if (data[i] == b_pawn || data[i] == w_pawn)
+                {
 
-                    number_of_moves += generate_legal_moveset_pawn(i, moveset, number_of_moves);
-
+                    new_no_moves = generate_legal_moveset_pawn(i, moveset, number_of_moves);
+                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                        starting_positions[j] = i;
+                    number_of_moves += new_no_moves;
+                }
                 else if (data[i] == b_knight || data[i] == w_knight)
+                {
 
-                    number_of_moves += generate_legal_moveset_knight(i, moveset, number_of_moves);
-
+                    new_no_moves = generate_legal_moveset_knight(i, moveset, number_of_moves);
+                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                        starting_positions[j] = i;
+                    number_of_moves += new_no_moves;
+                }
                 else if (data[i] == b_king || data[i] == w_king)
+                {
 
-                    number_of_moves += generate_legal_moveset_king(i, moveset, number_of_moves);
-
+                    new_no_moves = generate_legal_moveset_king(i, moveset, number_of_moves);
+                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                        starting_positions[j] = i;
+                    number_of_moves += new_no_moves;
+                }
                 else if (data[i] == b_rook || data[i] == w_rook)
+                {
 
-                    number_of_moves += generate_legal_moveset_rook(i, moveset, number_of_moves);
-
+                    new_no_moves = generate_legal_moveset_rook(i, moveset, number_of_moves);
+                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                        starting_positions[j] = i;
+                    number_of_moves += new_no_moves;
+                }
                 else if (data[i] == b_bishop || data[i] == b_bishop)
+                {
 
-                    number_of_moves += generate_legal_moveset_bishop(i, moveset, number_of_moves);
-
+                    new_no_moves = generate_legal_moveset_bishop(i, moveset, number_of_moves);
+                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                        starting_positions[j] = i;
+                    number_of_moves += new_no_moves;
+                }
                 else if (data[i] == b_queen || data[i] == b_queen)
+                {
 
-                    number_of_moves += generate_legal_moveset_queen(i, moveset, number_of_moves);
+                    new_no_moves = generate_legal_moveset_queen(i, moveset, number_of_moves);
+                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                        starting_positions[j] = i;
+                    number_of_moves += new_no_moves;
+                }
             }
         }
         return number_of_moves;

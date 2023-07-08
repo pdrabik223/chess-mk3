@@ -18,17 +18,7 @@ int pawn_moves[64];
 char pawn_moves_str[128];
 Board board(true);
 
-void setup()
-{
-  Serial.begin(115200);
-  Serial.println("Ready streaming");
-
-  board.to_string(str_representation_of_a_board);
-  Serial.println("board:");
-  Serial.println(str_representation_of_a_board);
-  delay(1000);
-}
-void loop()
+void move_over_board_and_print_info_about_pieces()
 {
 
   for (int pos = 0; pos < 64; pos++)
@@ -83,4 +73,46 @@ void loop()
     Serial.println(board.estimate_position());
     delay(1000);
   }
+}
+void read_board_from_serial(Board &board)
+{
+  if (Serial.available() > 0)
+  {
+
+    String val = Serial.readString();
+    if (val.length() == 64)
+    {
+      board.from_string(val);
+    }
+  }
+}
+
+void all_possible_positions()
+{
+
+  if (Serial.available() > 0)
+  {
+
+    read_board_from_serial(board);
+    Serial.println("board:");
+    board.to_string(str_representation_of_a_board);
+    Serial.println(str_representation_of_a_board);
+  }
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  Serial.println("Ready streaming");
+
+  board.to_string(str_representation_of_a_board);
+
+  Serial.println("board:");
+  Serial.println(str_representation_of_a_board);
+
+  delay(1000);
+}
+void loop()
+{
+  all_possible_positions();
 }
