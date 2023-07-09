@@ -119,9 +119,9 @@
 //   }
 // }
 
-char str_representation_of_a_board[65];
 void generate_test_cases(int no_of_test)
 {
+  char str_representation_of_a_board[65];
   Serial.println(":test_case:");
   Serial.println(no_of_test);
 
@@ -135,8 +135,9 @@ void generate_test_cases(int no_of_test)
   board.data[random(0, 64)] = w_pawn;
   board.data[random(0, 64)] = w_knight;
   // calculate statistics
-  int moves[256];
-  int starting_positions[256];
+  int moves[64];
+  int starting_positions[64];
+  float estimations[64];
   int no_moves = board.generate_legal_moveset_for_color(white, starting_positions, moves);
   float position_estimation = board.estimate_position();
 
@@ -164,6 +165,15 @@ void generate_test_cases(int no_of_test)
     Serial.println(moves[i]);
     // Serial.println(' ');
   }
+  Serial.println(":moves_estimation:");
+  board.estimate_all_moves_for_color(0, white, no_moves, starting_positions, moves, estimations);
+
+  for (int i = 0; i < no_moves; i++)
+  {
+    Serial.println(estimations[i]);
+    // Serial.println(' ');
+  }
+
   Serial.println(":test_end:");
 }
 

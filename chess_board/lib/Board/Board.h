@@ -185,15 +185,15 @@ public:
         data[prev_pos] = empty;
     }
 
-    int construct_coord(int x, int y)
+    int construct_coord(int x, int y) const
     {
         return x * 8 + y;
     }
-    int deconstruct_coord_x(int coord)
+    int deconstruct_coord_x(int coord) const
     {
         return coord / 8;
     }
-    int deconstruct_coord_y(int coord)
+    int deconstruct_coord_y(int coord) const
     {
         return coord % 8;
     }
@@ -203,7 +203,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_pawn(int pos, int *moveset, int number_of_moves = 0)
+    int generate_legal_moveset_pawn(int pos, int *moveset, int number_of_moves = 0) const
     {
 
         Color pawn_color = get_color(data[pos]);
@@ -267,7 +267,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_knight(int pos, int *moveset, int number_of_moves = 0)
+    int generate_legal_moveset_knight(int pos, int *moveset, int number_of_moves = 0) const
     {
 
         Color knight_color = get_color(data[pos]);
@@ -373,7 +373,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_king(const int pos, int *moveset, int number_of_moves = 0)
+    int generate_legal_moveset_king(const int pos, int *moveset, int number_of_moves = 0) const
     {
 
         Color king_color = get_color(data[pos]);
@@ -469,7 +469,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_rook(const int pos, int *moveset, int number_of_moves = 0)
+    int generate_legal_moveset_rook(const int pos, int *moveset, int number_of_moves = 0) const
     {
 
         Color rook_color = get_color(data[pos]);
@@ -542,7 +542,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_bishop(const int pos, int *moveset, int number_of_moves = 0)
+    int generate_legal_moveset_bishop(const int pos, int *moveset, int number_of_moves = 0) const
     {
 
         Color bishop_color = get_color(data[pos]);
@@ -615,7 +615,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_queen(const int pos, int *moveset, int number_of_moves = 0)
+    int generate_legal_moveset_queen(const int pos, int *moveset, int number_of_moves = 0) const
     {
         // queen is basically rook & bishop at once, so why even bother?
         number_of_moves = generate_legal_moveset_rook(pos, moveset, number_of_moves);
@@ -628,7 +628,7 @@ public:
     /// @param color color for which all moves possible will be generated
     /// @param moveset stores all legal possible move positions
     /// @return Number of legal moves
-    int generate_legal_moveset_for_color(Color color, int *starting_positions, int *moveset)
+    int generate_legal_moveset_for_color(Color color, int *starting_positions, int *moveset) const
     {
         int number_of_moves = 0;
         int new_no_moves;
@@ -689,7 +689,7 @@ public:
         return number_of_moves;
     }
 
-    float estimate_position()
+    float estimate_position() const
     {
         float estimation = 0;
         int pawn_moves[64];
@@ -729,5 +729,58 @@ public:
                 estimation += color_multiplier * generate_legal_moveset_queen(i, pawn_moves);
         }
         return estimation;
+    }
+    void estimate_all_moves_for_color(int depth, Color color, const int no_moves, int *starting_positions, int *moveset, float *estimations) const
+    {
+        if (color == white)
+            color = black;
+        else
+            color = white;
+
+        for (int i = 0; i < no_moves; i++)
+        {
+            Board board(*this);
+            board.move(starting_positions[i], moveset[i]);
+            estimations[i] = Board::alpha_beta(board, depth, -2000, 2000, color);
+        }
+    }
+
+    static float alpha_beta(const Board &board, int depth, float alpha, float beta, Color player_color)
+    {
+        if (depth == 0)
+            return board.estimate_position();
+
+        int moves[64];
+        int starting_positions[64];
+        int no_moves = board.generate_legal_moveset_for_color(player_color, starting_positions, moves);
+
+        if (player_color == white)
+        {
+            float result = -2000;
+            for (int i = 0; i < no_moves; i++)
+            {
+                Board child_board(board);
+                child_board.move(starting_positions[i], moves[i]);
+                result = max(result, alpha_beta(child_board, depth - 1, alpha, beta, black));
+                alpha = max(alpha, result);
+                if (result >= beta)
+                    break;
+            }
+            return result;
+        }
+        else
+        {
+            float result = 2000;
+            for (int i = 0; i < no_moves; i++)
+            {
+                Board child_board(board);
+                child_board.move(starting_positions[i], moves[i]);
+                result = min(result, alpha_beta(child_board, depth - 1, alpha, beta, white));
+                beta = min(beta, result);
+                if (result <= alpha)
+                    break;
+            }
+            return result;
+        }
     }
 };

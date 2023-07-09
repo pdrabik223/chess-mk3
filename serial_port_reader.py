@@ -76,11 +76,15 @@ class Board:
         self.data = [Piece.empty for _ in range(64)]
         self.starting_positions = []
         self.moves = []
+        self.moves_estimation = []
 
     def display_using_unicode(self):
         starting_positions_highlight_color = Back.GREEN
         moves_highlight_color = Back.YELLOW
-
+        best_move_color = Back.RED
+        best_move_piece_color = Back.CYAN
+        
+        
         to_8_counter = 0
         to_2_counter = 0
         final_string = ""
@@ -95,9 +99,17 @@ class Board:
                     starting_positions_highlight_color
                     + starting_positions_highlight_color
                 )
-            elif id in self.moves:
+            # if id in self.starting_positions:
+            #     if self.moves_estimation[self.starting_positions.index(id)] == max(self.moves_estimation):
+            #         background_color = best_move_piece_color + best_move_piece_color
+                
+            if id in self.moves:
                 background_color = moves_highlight_color + moves_highlight_color
 
+            if id in self.moves:
+                if self.moves_estimation[self.moves.index(id)] == max(self.moves_estimation):
+                    background_color = best_move_color + best_move_color
+                    
             if to_8_counter == 7:
                 endline = "\n"
 
@@ -234,7 +246,8 @@ class TestCase:
         test_params = [param.replace("\r", "") for param in test_params]
         test_params = [param.replace("\n", " ") for param in test_params]
         test_params = [param for param in test_params if param != ""]
-        print(test_params)
+        for id, param in enumerate(test_params):
+            print(id, param)
 
         no_moves = int(test_params[7])
         board = Board()
@@ -242,14 +255,17 @@ class TestCase:
 
         starting_positions = []
         moves = []
+        moves_estimation = []
 
         if no_moves > 0:
             starting_positions = [int(pos) for pos in test_params[9].split(" ")]
             moves = [int(pos) for pos in test_params[11].split(" ")]
+            moves_estimation = [float(pos) for pos in test_params[13].split(" ")]
             
             board.moves = moves
             board.starting_positions = starting_positions
-
+            board.moves_estimation = moves_estimation
+            
         return TestCase(
             test_case_no=int(test_params[1]),
             board=board,
