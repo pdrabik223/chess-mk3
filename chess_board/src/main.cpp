@@ -135,8 +135,8 @@ void generate_test_cases(int no_of_test)
   board.data[random(0, 64)] = w_pawn;
   board.data[random(0, 64)] = w_knight;
   // calculate statistics
-  int moves[64];
-  int starting_positions[64];
+  char moves[64];
+  char starting_positions[64];
   float estimations[64];
   int no_moves = board.generate_legal_moveset_for_color(white, starting_positions, moves);
   float position_estimation = board.estimate_position();
@@ -156,13 +156,13 @@ void generate_test_cases(int no_of_test)
 
   for (int i = 0; i < no_moves; i++)
   {
-    Serial.println(starting_positions[i]);
+    Serial.println(int(starting_positions[i]));
     // Serial.println(' ');
   }
   Serial.println(":moves_str:");
   for (int i = 0; i < no_moves; i++)
   {
-    Serial.println(moves[i]);
+    Serial.println(int(moves[i]));
     // Serial.println(' ');
   }
   Serial.println(":moves_estimation:");
