@@ -177,6 +177,7 @@ public:
         {
             board_str[i] = symbol_encoding[data[i]];
         }
+        board_str[64] = '\0';
     }
     void move(int prev_pos, int new_pos)
     {
@@ -214,35 +215,48 @@ public:
         {
             // black is on top, and goes down
 
-            if (data[construct_coord(pos_x + 1, pos_y)] == empty)
-                moveset[number_of_moves++] = construct_coord(pos_x + 1, pos_y);
+            if (pos_x == 1)
+                if (data[construct_coord(pos_x + 2, pos_y)] == empty && data[construct_coord(pos_x + 1, pos_y)] == empty)
+                    moveset[number_of_moves++] = construct_coord(pos_x + 2, pos_y);
 
-            if (pos_y > 0)
-                // if pawn is not on the left edge of the chessboard
-                if (is_white(data[construct_coord(pos_x + 1, pos_y - 1)]))
-                    moveset[number_of_moves++] = construct_coord(pos_x + 1, pos_y - 1);
+            if (pos_x + 1 < 8)
+            {
+                if (data[construct_coord(pos_x + 1, pos_y)] == empty)
+                    moveset[number_of_moves++] = construct_coord(pos_x + 1, pos_y);
 
-            if (pos_y < 8)
-                // if pawn is not on the right edge of the chessboard
-                if (is_white(data[construct_coord(pos_x + 1, pos_y + 1)]))
-                    moveset[number_of_moves++] = construct_coord(pos_x + 1, pos_y + 1);
+                if (pos_y - 1 >= 0)
+                    // if pawn is not on the left edge of the chessboard
+                    if (is_white(data[construct_coord(pos_x + 1, pos_y - 1)]))
+                        moveset[number_of_moves++] = construct_coord(pos_x + 1, pos_y - 1);
+
+                if (pos_y + 1 < 8)
+                    // if pawn is not on the right edge of the chessboard
+                    if (is_white(data[construct_coord(pos_x + 1, pos_y + 1)]))
+                        moveset[number_of_moves++] = construct_coord(pos_x + 1, pos_y + 1);
+            }
         }
         else
         {
             // white is on the bottom, and goes up
+            if (pos_x == 6)
+                if (data[construct_coord(pos_x - 2, pos_y)] == empty && data[construct_coord(pos_x - 1, pos_y)] == empty)
+                    moveset[number_of_moves++] = construct_coord(pos_x - 2, pos_y);
 
-            if (data[construct_coord(pos_x - 1, pos_y)] == empty)
-                moveset[number_of_moves++] = construct_coord(pos_x - 1, pos_y);
+            if (pos_x - 1 >= 0)
+            {
+                if (data[construct_coord(pos_x - 1, pos_y)] == empty)
+                    moveset[number_of_moves++] = construct_coord(pos_x - 1, pos_y);
 
-            if (pos_y > 0)
-                // if pawn is not on the left edge of the chessboard
-                if (is_black(data[construct_coord(pos_x - 1, pos_y - 1)]))
-                    moveset[number_of_moves++] = construct_coord(pos_x - 1, pos_y - 1);
+                if (pos_y - 1 >= 0)
+                    // if pawn is not on the left edge of the chessboard
+                    if (is_black(data[construct_coord(pos_x - 1, pos_y - 1)]))
+                        moveset[number_of_moves++] = construct_coord(pos_x - 1, pos_y - 1);
 
-            if (pos_y < 8)
-                // if pawn is not on the right edge of the chessboard
-                if (is_black(data[construct_coord(pos_x - 1, pos_y + 1)]))
-                    moveset[number_of_moves++] = construct_coord(pos_x - 1, pos_y + 1);
+                if (pos_y + 1 < 8)
+                    // if pawn is not on the right edge of the chessboard
+                    if (is_black(data[construct_coord(pos_x - 1, pos_y + 1)]))
+                        moveset[number_of_moves++] = construct_coord(pos_x - 1, pos_y + 1);
+            }
         }
 
         return number_of_moves;
@@ -329,25 +343,25 @@ public:
             if (get_color(data[new_pos]) != knight_color)
                 moveset[number_of_moves++] = new_pos;
         }
-        if (pos_x + 1 < 8 && pos_y - 1 >= 0)
+        if (pos_x + 1 < 8 && pos_y - 2 >= 0)
         {
             //  O O
             // O   O
             //   N
             // X   O
             //  O O
-            new_pos = construct_coord(pos_x + 1, pos_y - 1);
+            new_pos = construct_coord(pos_x + 1, pos_y - 2);
             if (get_color(data[new_pos]) != knight_color)
                 moveset[number_of_moves++] = new_pos;
         }
-        if (pos_x - 1 >= 0 && pos_y - 1 >= 0)
+        if (pos_x - 1 >= 0 && pos_y - 2 >= 0)
         {
             //  O O
             // X   O
             //   N
             // O   O
             //  O O
-            new_pos = construct_coord(pos_x - 1, pos_y - 1);
+            new_pos = construct_coord(pos_x - 1, pos_y - 2);
             if (get_color(data[new_pos]) != knight_color)
                 moveset[number_of_moves++] = new_pos;
         }
@@ -469,8 +483,13 @@ public:
         {
             // going down starting with position just under the rook
             new_pos = construct_coord(x, pos_y);
-            if (get_color(data[new_pos]) != rook_color)
+            if (data[new_pos] == empty)
                 moveset[number_of_moves++] = new_pos;
+            else if (get_color(data[new_pos]) != rook_color)
+            {
+                moveset[number_of_moves++] = new_pos;
+                break;
+            }
             else
                 break;
         }
@@ -478,8 +497,13 @@ public:
         {
             // going up starting with position just above the rook
             new_pos = construct_coord(x, pos_y);
-            if (get_color(data[new_pos]) != rook_color)
+            if (data[new_pos] == empty)
                 moveset[number_of_moves++] = new_pos;
+            else if (get_color(data[new_pos]) != rook_color)
+            {
+                moveset[number_of_moves++] = new_pos;
+                break;
+            }
             else
                 break;
         }
@@ -487,8 +511,13 @@ public:
         {
             // going right starting with position just to the right from the rook
             new_pos = construct_coord(pos_x, y);
-            if (get_color(data[new_pos]) != rook_color)
+            if (data[new_pos] == empty)
                 moveset[number_of_moves++] = new_pos;
+            else if (get_color(data[new_pos]) != rook_color)
+            {
+                moveset[number_of_moves++] = new_pos;
+                break;
+            }
             else
                 break;
         }
@@ -496,8 +525,13 @@ public:
         {
             // going left starting with position just to the left from the rook
             new_pos = construct_coord(pos_x, y);
-            if (get_color(data[new_pos]) != rook_color)
+            if (data[new_pos] == empty)
                 moveset[number_of_moves++] = new_pos;
+            else if (get_color(data[new_pos]) != rook_color)
+            {
+                moveset[number_of_moves++] = new_pos;
+                break;
+            }
             else
                 break;
         }
@@ -521,8 +555,13 @@ public:
         {
             // going down and right starting with position just to the right and down from the bishop
             new_pos = construct_coord(x, y);
-            if (get_color(data[new_pos]) != bishop_color)
+            if (data[new_pos] == empty)
                 moveset[number_of_moves++] = new_pos;
+            else if (get_color(data[new_pos]) != bishop_color)
+            {
+                moveset[number_of_moves++] = new_pos;
+                break;
+            }
             else
                 break;
         }
@@ -530,8 +569,13 @@ public:
         {
             // going down and left starting with position just to the left and down from the bishop
             new_pos = construct_coord(x, y);
-            if (get_color(data[new_pos]) != bishop_color)
+            if (data[new_pos] == empty)
                 moveset[number_of_moves++] = new_pos;
+            else if (get_color(data[new_pos]) != bishop_color)
+            {
+                moveset[number_of_moves++] = new_pos;
+                break;
+            }
             else
                 break;
         }
@@ -539,8 +583,13 @@ public:
         {
             // going up and left starting with position just to the left and up from the bishop
             new_pos = construct_coord(x, y);
-            if (get_color(data[new_pos]) != bishop_color)
+            if (data[new_pos] == empty)
                 moveset[number_of_moves++] = new_pos;
+            else if (get_color(data[new_pos]) != bishop_color)
+            {
+                moveset[number_of_moves++] = new_pos;
+                break;
+            }
             else
                 break;
         }
@@ -548,8 +597,13 @@ public:
         {
             // going up and right starting with position just to the right and up from the bishop
             new_pos = construct_coord(x, y);
-            if (get_color(data[new_pos]) != bishop_color)
+            if (data[new_pos] == empty)
                 moveset[number_of_moves++] = new_pos;
+            else if (get_color(data[new_pos]) != bishop_color)
+            {
+                moveset[number_of_moves++] = new_pos;
+                break;
+            }
             else
                 break;
         }
@@ -564,8 +618,8 @@ public:
     int generate_legal_moveset_queen(const int pos, int *moveset, int number_of_moves = 0)
     {
         // queen is basically rook & bishop at once, so why even bother?
-        number_of_moves += generate_legal_moveset_rook(pos, moveset, number_of_moves);
-        number_of_moves += generate_legal_moveset_bishop(pos, moveset, number_of_moves);
+        number_of_moves = generate_legal_moveset_rook(pos, moveset, number_of_moves);
+        number_of_moves = generate_legal_moveset_bishop(pos, moveset, number_of_moves);
 
         return number_of_moves;
     }
@@ -586,49 +640,49 @@ public:
                 {
 
                     new_no_moves = generate_legal_moveset_pawn(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                    for (int j = number_of_moves; j < new_no_moves; j++)
                         starting_positions[j] = i;
-                    number_of_moves += new_no_moves;
+                    number_of_moves = new_no_moves;
                 }
                 else if (data[i] == b_knight || data[i] == w_knight)
                 {
 
                     new_no_moves = generate_legal_moveset_knight(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                    for (int j = number_of_moves; j < new_no_moves; j++)
                         starting_positions[j] = i;
-                    number_of_moves += new_no_moves;
+                    number_of_moves = new_no_moves;
                 }
                 else if (data[i] == b_king || data[i] == w_king)
                 {
 
                     new_no_moves = generate_legal_moveset_king(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                    for (int j = number_of_moves; j < new_no_moves; j++)
                         starting_positions[j] = i;
-                    number_of_moves += new_no_moves;
+                    number_of_moves = new_no_moves;
                 }
                 else if (data[i] == b_rook || data[i] == w_rook)
                 {
 
                     new_no_moves = generate_legal_moveset_rook(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                    for (int j = number_of_moves; j < new_no_moves; j++)
                         starting_positions[j] = i;
-                    number_of_moves += new_no_moves;
+                    number_of_moves = new_no_moves;
                 }
-                else if (data[i] == b_bishop || data[i] == b_bishop)
+                else if (data[i] == b_bishop || data[i] == w_bishop)
                 {
 
                     new_no_moves = generate_legal_moveset_bishop(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                    for (int j = number_of_moves; j < new_no_moves; j++)
                         starting_positions[j] = i;
-                    number_of_moves += new_no_moves;
+                    number_of_moves = new_no_moves;
                 }
-                else if (data[i] == b_queen || data[i] == b_queen)
+                else if (data[i] == b_queen || data[i] == w_queen)
                 {
 
                     new_no_moves = generate_legal_moveset_queen(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < number_of_moves + new_no_moves; j++)
+                    for (int j = number_of_moves; j < new_no_moves; j++)
                         starting_positions[j] = i;
-                    number_of_moves += new_no_moves;
+                    number_of_moves = new_no_moves;
                 }
             }
         }
