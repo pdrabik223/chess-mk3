@@ -1,4 +1,5 @@
 #include <String.h>
+#define MAX_NO_MOVES_IN_EACH_BOARD 256
 
 const char symbol_encoding[13]{'e', 'p', 'n', 'b', 'r', 'q', 'k', 'P', 'N', 'B', 'R', 'Q', 'K'};
 const int weight_encoding[13]{0, 1, 3, 3, 5, 9, 1000, -1, -3, -3, -5, -9, -1000};
@@ -60,7 +61,7 @@ public:
 public:
     Board()
     {
-        for (char i = 0; i < 64; i++)
+        for (int i = 0; i < 64; i++)
         {
             data[i] = empty;
         }
@@ -692,76 +693,103 @@ public:
     float estimate_position() const
     {
         float estimation = 0;
-        char pawn_moves[64];
-        for (char i = 0; i < 64; i++)
+        char pawn_moves[MAX_NO_MOVES_IN_EACH_BOARD];
+        for (int i = 0; i < 64; i++)
         {
-            estimation += weight_encoding[data[i]];
-            // here add points based on no available moves
-            float color_multiplier;
+            if (data[i] != empty)
+            {
+                estimation += weight_encoding[data[i]];
 
-            if (is_black(data[i]))
-                color_multiplier = -0.1;
-            else
-                color_multiplier = 0.1;
-
-            if (data[i] == b_pawn || data[i] == w_pawn)
-
-                estimation += color_multiplier * generate_legal_moveset_pawn(i, pawn_moves);
-
-            else if (data[i] == b_knight || data[i] == w_knight)
-
-                estimation += color_multiplier * generate_legal_moveset_knight(i, pawn_moves);
-
-            else if (data[i] == b_king || data[i] == w_king)
-
-                estimation += color_multiplier * generate_legal_moveset_king(i, pawn_moves);
-
-            else if (data[i] == b_rook || data[i] == w_rook)
-
-                estimation += color_multiplier * generate_legal_moveset_rook(i, pawn_moves);
-
-            else if (data[i] == b_bishop || data[i] == b_bishop)
-
-                estimation += color_multiplier * generate_legal_moveset_bishop(i, pawn_moves);
-
-            else if (data[i] == b_queen || data[i] == b_queen)
-
-                estimation += color_multiplier * generate_legal_moveset_queen(i, pawn_moves);
+                switch (data[i])
+                {
+                case b_pawn:
+                    estimation -= 0.1 * generate_legal_moveset_pawn(i, pawn_moves);
+                    break;
+                case w_pawn:
+                    estimation += 0.1 * generate_legal_moveset_pawn(i, pawn_moves);
+                    break;
+                case b_knight:
+                    estimation -= 0.1 * generate_legal_moveset_knight(i, pawn_moves);
+                    break;
+                case w_knight:
+                    estimation += 0.1 * generate_legal_moveset_knight(i, pawn_moves);
+                    break;
+                case b_king:
+                    estimation -= 0.1 * generate_legal_moveset_king(i, pawn_moves);
+                    break;
+                case w_king:
+                    estimation += 0.1 * generate_legal_moveset_king(i, pawn_moves);
+                    break;
+                case b_rook:
+                    estimation -= 0.1 * generate_legal_moveset_rook(i, pawn_moves);
+                    break;
+                case w_rook:
+                    estimation += 0.1 * generate_legal_moveset_rook(i, pawn_moves);
+                    break;
+                case b_bishop:
+                    estimation -= 0.1 * generate_legal_moveset_bishop(i, pawn_moves);
+                    break;
+                case w_bishop:
+                    estimation += 0.1 * generate_legal_moveset_bishop(i, pawn_moves);
+                    break;
+                case b_queen:
+                    estimation -= 0.1 * generate_legal_moveset_queen(i, pawn_moves);
+                    break;
+                case w_queen:
+                    estimation += 0.1 * generate_legal_moveset_queen(i, pawn_moves);
+                    break;
+                }
+            }
         }
         return estimation;
     }
-    void estimate_all_moves_for_color(char depth, Color color, const int no_moves, char *starting_positions, char *moveset, float *estimations) const
+    void estimate_all_moves_for_color(char depth, Color color, const int no_moves, char *starting_positions, char *moveset, float *estimations)
     {
         if (color == white)
             color = black;
         else
             color = white;
 
+        Piece from;
+        Piece to;
+
         for (int i = 0; i < no_moves; i++)
         {
-            Board board(*this);
-            board.move(starting_positions[i], moveset[i]);
-            estimations[i] = Board::alpha_beta(board, depth, -2000, 2000, color);
+            from = data[starting_positions[i]];
+            to = data[moveset[i]];
+            move(starting_positions[i], moveset[i]);
+            estimations[i] = Board::alpha_beta(*this, depth, -2000, 2000, color);
+            data[starting_positions[i]] = from;
+            data[moveset[i]] = to;
         }
     }
 
-    static float alpha_beta(const Board &board, char depth, float alpha, float beta, Color player_color)
+    static float alpha_beta(Board &board, char depth, float alpha, float beta, Color player_color)
     {
-        if (depth == 0)
-            return board.estimate_position();
 
-        char moves[64];
-        char starting_positions[64];
+        float current_estimation = board.estimate_position();
+        if (depth == 0 || current_estimation < -900 || current_estimation > 900)
+            return current_estimation;
+
+        char starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
+        char moves[MAX_NO_MOVES_IN_EACH_BOARD];
         int no_moves = board.generate_legal_moveset_for_color(player_color, starting_positions, moves);
-
+        Piece from;
+        Piece to;
         if (player_color == white)
         {
-            float result = -2000;
+            float result = -1000;
             for (int i = 0; i < no_moves; i++)
             {
-                Board child_board(board);
-                child_board.move(starting_positions[i], moves[i]);
-                result = max(result, alpha_beta(child_board, depth - 1, alpha, beta, black));
+                from = board.data[starting_positions[i]];
+                to = board.data[moves[i]];
+
+                board.move(starting_positions[i], moves[i]);
+                result = max(result, alpha_beta(board, depth - 1, alpha, beta, black));
+
+                board.data[starting_positions[i]] = from;
+                board.data[moves[i]] = to;
+
                 alpha = max(alpha, result);
                 if (result >= beta)
                     break;
@@ -770,12 +798,19 @@ public:
         }
         else
         {
-            float result = 2000;
+            float result = 1000;
             for (int i = 0; i < no_moves; i++)
             {
-                Board child_board(board);
-                child_board.move(starting_positions[i], moves[i]);
-                result = min(result, alpha_beta(child_board, depth - 1, alpha, beta, white));
+
+                from = board.data[starting_positions[i]];
+                to = board.data[moves[i]];
+
+                board.move(starting_positions[i], moves[i]);
+                result = min(result, alpha_beta(board, depth - 1, alpha, beta, white));
+
+                board.data[starting_positions[i]] = from;
+                board.data[moves[i]] = to;
+
                 beta = min(beta, result);
                 if (result <= alpha)
                     break;
