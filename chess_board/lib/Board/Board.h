@@ -61,7 +61,7 @@ public:
 public:
     Board()
     {
-        for (int i = 0; i < 64; i++)
+        for (char i = 0; i < 64; i++)
         {
             data[i] = empty;
         }
@@ -79,7 +79,7 @@ public:
         {
             data[i] = Piece(string[i]);
         }
-    }
+        }
     Board(bool from_starting_position)
     {
         for (char i = 0; i < 64; i++)

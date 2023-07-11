@@ -344,14 +344,14 @@ if __name__ == "__main__":
     while True:
         resp: bytes = device.readline()
         try:
-            print(resp.decode("utf-8"))
-            if "test_end"  in resp.decode("utf-8") or "iteration_end" in resp.decode("utf-8"):
-                buffer = buffer + resp.decode("utf-8")
-                test_example = SimulateGameTestCase.parse_string(buffer)
-                test_example.board.display_using_unicode()
-                buffer = ""
-            else:
-                buffer = buffer + resp.decode("utf-8")
+            print(resp)
+            # if "test_end"  in resp.decode("utf-8") or "iteration_end" in resp.decode("utf-8"):
+            #     buffer = buffer + resp.decode("utf-8")
+            #     test_example = SimulateGameTestCase.parse_string(buffer)
+            #     test_example.board.display_using_unicode()
+            #     buffer = ""
+            # else:
+            #     buffer = buffer + resp.decode("utf-8")
 
         except Exception as ex:
             print("error:", str(ex), "raw", resp)
