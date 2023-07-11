@@ -267,19 +267,31 @@ void simulate_game()
   }
 }
 LedStrip<8> led_strip(64);
+#define hall_sensor 7
 void setup()
 {
   led_strip.TurnRainbowOnAnimation(60);
+  pinMode(hall_sensor, INPUT);
   // Serial.begin(115200);
   // Serial.println("Ready streaming");
 }
-
 int no_of_test = 0;
 void loop()
 {
-  // led_strip.Fill(CRGB::Green);
-  // led_strip.Update();
-  // delay(2000);
+
+  if (digitalRead(hall_sensor) == HIGH)
+  {
+    led_strip.Fill(CRGB::WhiteSmoke);
+    led_strip.Update();
+  }
+
+  if (digitalRead(hall_sensor) == LOW)
+  {
+    led_strip.Fill(CRGB::Black);
+    led_strip.Update();
+  }
+
+  delay(200);
   // led_strip.Fill(CRGB::Red);
   // led_strip.Update();
   // delay(2000);
