@@ -125,12 +125,19 @@ public:
         data[54] = w_pawn;
         data[55] = w_pawn;
     }
+
+    void set_piece(uint8_t x, uint8_t y, Piece piece)
+    {
+        data[x * 8 + y] = piece;
+    }
+
     Piece &get_piece(const int8_t position)
     {
         if (position < 0 || position > 64)
             Serial.println("error in get_piece position is:" + position);
         return data[position];
     }
+
     void from_string(const String &board_str)
     {
 
@@ -191,8 +198,17 @@ public:
     }
     void move(int8_t prev_pos, int8_t new_pos)
     {
-        get_piece(new_pos) = get_piece(prev_pos);
-        get_piece(prev_pos) = empty;
+        if (new_pos / width == 0 && data[prev_pos] == w_pawn)
+            // white pawn piece upgrade to queen
+            data[new_pos] = w_queen;
+        else if (new_pos / width == 7 && data[prev_pos] == b_pawn)
+            // white pawn piece upgrade to queen
+            data[new_pos] = b_queen;
+        else
+            // just a normal move
+            data[new_pos] = data[prev_pos];
+
+        data[prev_pos] = empty;
     }
 
     int8_t construct_coord(int8_t x, int8_t y) const
@@ -786,10 +802,13 @@ public:
         int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
         int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
         int no_moves = generate_legal_moveset_for_color(player_color, starting_positions, moves);
+
         Piece from;
         Piece to;
         if (player_color == white)
         {
+            if (no_moves == 0)
+                return -1000;
             float result = -1000;
             for (int i = 0; i < no_moves; i++)
             {
@@ -810,6 +829,8 @@ public:
         }
         else
         {
+            if (no_moves == 0)
+                return 1000;
             float result = 1000;
             for (int i = 0; i < no_moves; i++)
             {

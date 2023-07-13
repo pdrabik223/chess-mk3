@@ -110,15 +110,37 @@ void simulate_game()
         no_iteration++;
     }
 }
+
+void check_for_mat_in_2()
+{
+    int no_iteration = 0;
+    Board board;
+    board.set_piece(0, 0, b_king);
+    board.set_piece(7, 7, w_rook);
+    board.set_piece(7, 6, w_rook);
+    board.set_piece(7, 5, w_king);
+    while (true)
+    {
+        if (simulate_game_for_color(no_iteration, white, board, 2))
+            return;
+
+        delay(1000);
+
+        if (simulate_game_for_color(no_iteration, black, board, 2))
+            return;
+
+        delay(1000);
+
+        no_iteration++;
+    }
+}
 void setup()
 {
     Serial.begin(115200);
     delay(1000);
-    // Serial.println("Ready streaming");
-    // delay(1000);
 }
 
 void loop()
 {
-    simulate_game();
+    check_for_mat_in_2();
 }
