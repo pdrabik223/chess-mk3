@@ -1,25 +1,28 @@
 #include <String.h>
-#define MAX_NO_MOVES_IN_EACH_BOARD 256
+#ifndef BOARD_H
+#define BOARD_H
+#include <stdint.h> /// for special uint tyoes like int8_t
+#define MAX_NO_MOVES_IN_EACH_BOARD 128
 
-const char symbol_encoding[13]{'e', 'p', 'n', 'b', 'r', 'q', 'k', 'P', 'N', 'B', 'R', 'Q', 'K'};
+const int8_t symbol_encoding[13]{'e', 'p', 'n', 'b', 'r', 'q', 'k', 'P', 'N', 'B', 'R', 'Q', 'K'};
 const int weight_encoding[13]{0, 1, 3, 3, 5, 9, 1000, -1, -3, -3, -5, -9, -1000};
 
-enum Piece : char
+enum Piece : int8_t
 {
-    empty,
-    w_pawn,
-    w_knight,
-    w_bishop,
-    w_rook,
-    w_queen,
-    w_king,
+    empty = 0,
+    w_pawn = 1,
+    w_knight = 2,
+    w_bishop = 3,
+    w_rook = 4,
+    w_queen = 5,
+    w_king = 6,
 
-    b_pawn,
-    b_knight,
-    b_bishop,
-    b_rook,
-    b_queen,
-    b_king
+    b_pawn = 7,
+    b_knight = 8,
+    b_bishop = 9,
+    b_rook = 10,
+    b_queen = 11,
+    b_king = 12
 };
 bool is_white(Piece piece)
 {
@@ -34,7 +37,7 @@ bool is_black(Piece piece)
     return false;
 }
 
-enum Color : char
+enum Color : int8_t
 {
     no_color,
     white,
@@ -55,34 +58,34 @@ class Board
 
 public:
     Piece data[64];
-    const char width = 8;
-    const char height = 8;
+    const int8_t width = 8;
+    const int8_t height = 8;
 
 public:
     Board()
     {
-        for (char i = 0; i < 64; i++)
+        for (int8_t i = 0; i < 64; i++)
         {
             data[i] = empty;
         }
     }
     Board(const Board &copy)
     {
-        for (char i = 0; i < 64; i++)
+        for (int8_t i = 0; i < 64; i++)
         {
             data[i] = copy.data[i];
         }
     }
     Board(const char *string)
     {
-        for (char i = 0; i < 64; i++)
+        for (int8_t i = 0; i < 64; i++)
         {
             data[i] = Piece(string[i]);
         }
-        }
+    }
     Board(bool from_starting_position)
     {
-        for (char i = 0; i < 64; i++)
+        for (int8_t i = 0; i < 64; i++)
         {
             data[i] = empty;
         }
@@ -122,10 +125,16 @@ public:
         data[54] = w_pawn;
         data[55] = w_pawn;
     }
-    void from_string(const String board_str)
+    Piece &get_piece(const int8_t position)
+    {
+        if (position < 0 || position > 64)
+            Serial.println("error in get_piece position is:" + position);
+        return data[position];
+    }
+    void from_string(const String &board_str)
     {
 
-        for (char i = 0; i < 64; i++)
+        for (int8_t i = 0; i < 64; i++)
         {
             switch (board_str[i])
             {
@@ -174,27 +183,27 @@ public:
 
     void to_string(char *board_str)
     {
-        for (char i = 0; i < 64; i++)
+        for (int8_t i = 0; i < 64; i++)
         {
             board_str[i] = symbol_encoding[data[i]];
         }
         board_str[64] = '\0';
     }
-    void move(char prev_pos, char new_pos)
+    void move(int8_t prev_pos, int8_t new_pos)
     {
-        data[new_pos] = data[prev_pos];
-        data[prev_pos] = empty;
+        get_piece(new_pos) = get_piece(prev_pos);
+        get_piece(prev_pos) = empty;
     }
 
-    char construct_coord(char x, char y) const
+    int8_t construct_coord(int8_t x, int8_t y) const
     {
         return x * 8 + y;
     }
-    char deconstruct_coord_x(char coord) const
+    int8_t deconstruct_coord_x(int8_t coord) const
     {
         return coord / 8;
     }
-    char deconstruct_coord_y(char coord) const
+    int8_t deconstruct_coord_y(int8_t coord) const
     {
         return coord % 8;
     }
@@ -204,13 +213,13 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_pawn(char pos, char *moveset, char number_of_moves = 0) const
+    int generate_legal_moveset_pawn(int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
 
         Color pawn_color = get_color(data[pos]);
 
-        char pos_x = pos / width;
-        char pos_y = pos % width;
+        int8_t pos_x = pos / width;
+        int8_t pos_y = pos % width;
 
         if (pawn_color == black)
         {
@@ -268,15 +277,15 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_knight(char pos, char *moveset, char number_of_moves = 0) const
+    int generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
 
         Color knight_color = get_color(data[pos]);
 
-        char pos_x = pos / width;
-        char pos_y = pos % width;
+        int8_t pos_x = pos / width;
+        int8_t pos_y = pos % width;
 
-        char new_pos;
+        int8_t new_pos;
         if (pos_x - 2 >= 0 && pos_y - 1 >= 0)
         {
             //  X O
@@ -374,15 +383,15 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_king(const char pos, char *moveset, char number_of_moves = 0) const
+    int generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
 
         Color king_color = get_color(data[pos]);
 
-        char pos_x = pos / width;
-        char pos_y = pos % width;
+        int8_t pos_x = pos / width;
+        int8_t pos_y = pos % width;
 
-        char new_pos;
+        int8_t new_pos;
         if (pos_x - 1 >= 0 && pos_y - 1 >= 0)
         {
             // XOO
@@ -470,17 +479,17 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_rook(const char pos, char *moveset, char number_of_moves = 0) const
+    int generate_legal_moveset_rook(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
 
         Color rook_color = get_color(data[pos]);
 
-        char pos_x = pos / width;
-        char pos_y = pos % width;
+        int8_t pos_x = pos / width;
+        int8_t pos_y = pos % width;
 
-        char new_pos;
+        int8_t new_pos;
 
-        for (char x = pos_x + 1; x < 8; x++)
+        for (int8_t x = pos_x + 1; x < 8; x++)
         {
             // going down starting with position just under the rook
             new_pos = construct_coord(x, pos_y);
@@ -494,7 +503,7 @@ public:
             else
                 break;
         }
-        for (int x = pos_x - 1; x >= 0; x--)
+        for (int8_t x = pos_x - 1; x >= 0; x--)
         {
             // going up starting with position just above the rook
             new_pos = construct_coord(x, pos_y);
@@ -508,7 +517,7 @@ public:
             else
                 break;
         }
-        for (int y = pos_y + 1; y < 8; y++)
+        for (int8_t y = pos_y + 1; y < 8; y++)
         {
             // going right starting with position just to the right from the rook
             new_pos = construct_coord(pos_x, y);
@@ -522,7 +531,7 @@ public:
             else
                 break;
         }
-        for (int y = pos_y - 1; y >= 0; y--)
+        for (int8_t y = pos_y - 1; y >= 0; y--)
         {
             // going left starting with position just to the left from the rook
             new_pos = construct_coord(pos_x, y);
@@ -543,16 +552,16 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_bishop(const char pos, char *moveset, char number_of_moves = 0) const
+    int generate_legal_moveset_bishop(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
 
         Color bishop_color = get_color(data[pos]);
 
-        char pos_x = pos / width;
-        char pos_y = pos % width;
+        int8_t pos_x = pos / width;
+        int8_t pos_y = pos % width;
 
-        char new_pos;
-        for (char x = pos_x + 1, y = pos_y + 1; x < 8 && y < 8; x++, y++)
+        int8_t new_pos;
+        for (int8_t x = pos_x + 1, y = pos_y + 1; x < 8 && y < 8; x++, y++)
         {
             // going down and right starting with position just to the right and down from the bishop
             new_pos = construct_coord(x, y);
@@ -566,7 +575,7 @@ public:
             else
                 break;
         }
-        for (char x = pos_x + 1, y = pos_y - 1; x < 8 && y >= 0; x++, y--)
+        for (int8_t x = pos_x + 1, y = pos_y - 1; x < 8 && y >= 0; x++, y--)
         {
             // going down and left starting with position just to the left and down from the bishop
             new_pos = construct_coord(x, y);
@@ -580,7 +589,7 @@ public:
             else
                 break;
         }
-        for (char x = pos_x - 1, y = pos_y - 1; x >= 0 && y >= 0; x--, y--)
+        for (int8_t x = pos_x - 1, y = pos_y - 1; x >= 0 && y >= 0; x--, y--)
         {
             // going up and left starting with position just to the left and up from the bishop
             new_pos = construct_coord(x, y);
@@ -594,7 +603,7 @@ public:
             else
                 break;
         }
-        for (char x = pos_x - 1, y = pos_y + 1; x >= 0 && y < 8; x--, y++)
+        for (int8_t x = pos_x - 1, y = pos_y + 1; x >= 0 && y < 8; x--, y++)
         {
             // going up and right starting with position just to the right and up from the bishop
             new_pos = construct_coord(x, y);
@@ -616,7 +625,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_queen(const char pos, char *moveset, char number_of_moves = 0) const
+    int generate_legal_moveset_queen(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
         // queen is basically rook & bishop at once, so why even bother?
         number_of_moves = generate_legal_moveset_rook(pos, moveset, number_of_moves);
@@ -629,11 +638,11 @@ public:
     /// @param color color for which all moves possible will be generated
     /// @param moveset stores all legal possible move positions
     /// @return Number of legal moves
-    int generate_legal_moveset_for_color(Color color, char *starting_positions, char *moveset) const
+    int generate_legal_moveset_for_color(Color color, int8_t *starting_positions, int8_t *moveset) const
     {
         int number_of_moves = 0;
         int new_no_moves;
-        for (char i = 0; i < 64; i++)
+        for (int8_t i = 0; i < 64; i++)
         {
             if (get_color(data[i]) == color)
             {
@@ -693,7 +702,7 @@ public:
     float estimate_position() const
     {
         float estimation = 0;
-        char pawn_moves[MAX_NO_MOVES_IN_EACH_BOARD];
+        int8_t pawn_moves[MAX_NO_MOVES_IN_EACH_BOARD];
         for (int i = 0; i < 64; i++)
         {
             if (data[i] != empty)
@@ -738,42 +747,45 @@ public:
                 case w_queen:
                     estimation += 0.1 * generate_legal_moveset_queen(i, pawn_moves);
                     break;
+                default:
+                    break;
                 }
             }
         }
         return estimation;
     }
-    void estimate_all_moves_for_color(char depth, Color color, const int no_moves, char *starting_positions, char *moveset, float *estimations)
+    void estimate_all_moves_for_color(int8_t depth, Color color, const int no_moves, int8_t *starting_positions, int8_t *moveset, float *estimations)
     {
         if (color == white)
             color = black;
         else
             color = white;
 
-        Piece from;
-        Piece to;
-
         for (int i = 0; i < no_moves; i++)
         {
-            from = data[starting_positions[i]];
-            to = data[moveset[i]];
+
+            auto from = Piece(data[starting_positions[i]]);
+            auto to = Piece(data[moveset[i]]);
+
             move(starting_positions[i], moveset[i]);
-            estimations[i] = Board::alpha_beta(*this, depth, -2000, 2000, color);
-            data[starting_positions[i]] = from;
-            data[moveset[i]] = to;
+
+            estimations[i] = alpha_beta(depth, -2000, 2000, color);
+
+            data[starting_positions[i]] = Piece(from);
+            data[moveset[i]] = Piece(to);
         }
     }
 
-    static float alpha_beta(Board &board, char depth, float alpha, float beta, Color player_color)
+    float alpha_beta(const int depth, float alpha, float beta, const Color player_color)
     {
 
-        float current_estimation = board.estimate_position();
-        if (depth == 0 || current_estimation < -900 || current_estimation > 900)
+        float current_estimation = estimate_position();
+        if (depth <= 0 || current_estimation < -900 || current_estimation > 900)
             return current_estimation;
 
-        char starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
-        char moves[MAX_NO_MOVES_IN_EACH_BOARD];
-        int no_moves = board.generate_legal_moveset_for_color(player_color, starting_positions, moves);
+        int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
+        int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
+        int no_moves = generate_legal_moveset_for_color(player_color, starting_positions, moves);
         Piece from;
         Piece to;
         if (player_color == white)
@@ -781,14 +793,14 @@ public:
             float result = -1000;
             for (int i = 0; i < no_moves; i++)
             {
-                from = board.data[starting_positions[i]];
-                to = board.data[moves[i]];
+                from = data[starting_positions[i]];
+                to = data[moves[i]];
 
-                board.move(starting_positions[i], moves[i]);
-                result = max(result, alpha_beta(board, depth - 1, alpha, beta, black));
+                move(starting_positions[i], moves[i]);
+                result = max(result, alpha_beta(depth - 1, alpha, beta, black));
 
-                board.data[starting_positions[i]] = from;
-                board.data[moves[i]] = to;
+                data[starting_positions[i]] = from;
+                data[moves[i]] = to;
 
                 alpha = max(alpha, result);
                 if (result >= beta)
@@ -802,14 +814,14 @@ public:
             for (int i = 0; i < no_moves; i++)
             {
 
-                from = board.data[starting_positions[i]];
-                to = board.data[moves[i]];
+                from = data[starting_positions[i]];
+                to = data[moves[i]];
 
-                board.move(starting_positions[i], moves[i]);
-                result = min(result, alpha_beta(board, depth - 1, alpha, beta, white));
+                move(starting_positions[i], moves[i]);
+                result = min(result, alpha_beta(depth - 1, alpha, beta, white));
 
-                board.data[starting_positions[i]] = from;
-                board.data[moves[i]] = to;
+                data[starting_positions[i]] = from;
+                data[moves[i]] = to;
 
                 beta = min(beta, result);
                 if (result <= alpha)
@@ -819,3 +831,5 @@ public:
         }
     }
 };
+
+#endif
