@@ -29,8 +29,8 @@ class SimulateGameTestCase:
         test_params = [param.replace("\n", " ") for param in test_params]
         test_params = [param for param in test_params if param != ""]
 
-        # for id, param in enumerate(test_params):
-        #     print(id, param)
+        for id, param in enumerate(test_params):
+            print(id, param)
 
         board = Board()
         board.parse_board(test_params[5])
@@ -65,18 +65,19 @@ if __name__ == "__main__":
 
     device = set_up_serial_connection()
     buffer = ""
-    while True:
-        resp: bytes = device.readline()
-        # print(resp)
-        try:
-            if "iteration_end" in resp.decode("utf-8"):
-                buffer = buffer + resp.decode("utf-8")
-                test_example = SimulateGameTestCase.parse_string(buffer)
-                test_example.board.display_using_unicode()
-                
-                buffer = ""
-            else:
-                buffer = buffer + resp.decode("utf-8")
-
-        except Exception as ex:
-            print("error:", str(ex), "raw:", resp, "decoded:", resp.decode("utf-8"))
+    with open('output.txt', 'w') as f:
+        while True:
+            resp: bytes = device.readline()
+            print(resp.decode("utf-8"))
+            f.writelines(resp.decode("utf-8"))
+            try:
+                # if "iteration_end" in resp.decode("utf-8"):
+                #     buffer = buffer + resp.decode("utf-8")
+                #     test_example = SimulateGameTestCase.parse_string(buffer)
+                #     test_example.board.display_using_unicode()
+                #     buffer = ""
+                # else:
+                #     buffer = buffer + resp.decode("utf-8")
+                pass
+            except Exception as ex:
+                print("error:", str(ex), "raw:", resp, "decoded:", resp.decode("utf-8"))

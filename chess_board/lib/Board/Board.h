@@ -717,8 +717,8 @@ public:
 
     float estimate_position() const
     {
+        int8_t pawn_moves[64];
         float estimation = 0;
-        int8_t pawn_moves[MAX_NO_MOVES_IN_EACH_BOARD];
         for (int i = 0; i < 64; i++)
         {
             if (data[i] != empty)
