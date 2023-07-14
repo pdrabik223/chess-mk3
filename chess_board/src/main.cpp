@@ -170,18 +170,19 @@ void simulate_game()
         no_iteration++;
     }
 }
+
 void simulate_game_w_time()
 {
     int no_iteration = 0;
     Board board(true);
     while (true)
     {
-        if (simulate_game_for_color_w_time_measure(no_iteration, white, board, 1))
+        if (simulate_game_for_color_w_time_measure(no_iteration, white, board, 2))
             return;
 
         delay(1000);
 
-        if (simulate_game_for_color_w_time_measure(no_iteration, black, board, 1))
+        if (simulate_game_for_color_w_time_measure(no_iteration, black, board, 2))
             return;
 
         delay(1000);
