@@ -334,6 +334,69 @@ public:
         return number_of_moves;
     }
 
+    /// @brief generates noumber of legal moves for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of legal moves
+    inline int8_t generate_no_legal_moves_pawn(int8_t pos, uint8_t number_of_moves = 0) const
+    {
+
+        Color pawn_color = get_color(data[pos]);
+
+        int8_t pos_x = pos / width;
+        int8_t pos_y = pos % width;
+
+        if (pawn_color == black)
+        {
+            // black is on top, and goes down
+
+            if (pos_x == 1)
+                if (data[construct_coord(pos_x + 2, pos_y)] == empty && data[construct_coord(pos_x + 1, pos_y)] == empty)
+                    number_of_moves++;
+
+            if (pos_x + 1 < 8)
+            {
+                if (data[construct_coord(pos_x + 1, pos_y)] == empty)
+                    number_of_moves++;
+
+                if (pos_y - 1 >= 0)
+                    // if pawn is not on the left edge of the chessboard
+                    if (is_white(data[construct_coord(pos_x + 1, pos_y - 1)]))
+                        number_of_moves++;
+
+                if (pos_y + 1 < 8)
+                    // if pawn is not on the right edge of the chessboard
+                    if (is_white(data[construct_coord(pos_x + 1, pos_y + 1)]))
+                        number_of_moves++;
+            }
+        }
+        else
+        {
+            // white is on the bottom, and goes up
+            if (pos_x == 6)
+                if (data[construct_coord(pos_x - 2, pos_y)] == empty && data[construct_coord(pos_x - 1, pos_y)] == empty)
+                    number_of_moves++;
+
+            if (pos_x - 1 >= 0)
+            {
+                if (data[construct_coord(pos_x - 1, pos_y)] == empty)
+                    number_of_moves++;
+
+                if (pos_y - 1 >= 0)
+                    // if pawn is not on the left edge of the chessboard
+                    if (is_black(data[construct_coord(pos_x - 1, pos_y - 1)]))
+                        number_of_moves++;
+
+                if (pos_y + 1 < 8)
+                    // if pawn is not on the right edge of the chessboard
+                    if (is_black(data[construct_coord(pos_x - 1, pos_y + 1)]))
+                        number_of_moves++;
+            }
+        }
+
+        return number_of_moves;
+    }
+
     /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
     /// @param moveset stores all legal possible move positions
@@ -440,6 +503,113 @@ public:
 
         return number_of_moves;
     }
+
+    /// @brief generates noumber of legal moves for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of legal moves
+    inline int8_t generate_no_legal_moves_knight(int8_t pos, int8_t number_of_moves = 0) const
+    {
+
+        Color knight_color = get_color(data[pos]);
+
+        int8_t pos_x = pos / width;
+        int8_t pos_y = pos % width;
+
+        int8_t new_pos;
+        if (pos_x - 2 >= 0 && pos_y - 1 >= 0)
+        {
+            //  X O
+            // O   O
+            //   N
+            // O   O
+            //  O O
+            new_pos = construct_coord(pos_x - 2, pos_y - 1);
+            if (get_color(data[new_pos]) != knight_color)
+                number_of_moves++;
+        }
+
+        if (pos_x - 2 >= 0 && pos_y + 1 < 8)
+        {
+            //  O X
+            // O   O
+            //   N
+            // O   O
+            //  O O
+            new_pos = construct_coord(pos_x - 2, pos_y + 1);
+            if (get_color(data[new_pos]) != knight_color)
+                number_of_moves++;
+        }
+        if (pos_x - 1 >= 0 && pos_y + 2 < 8)
+        {
+            //  O O
+            // O   X
+            //   N
+            // O   O
+            //  O O
+            new_pos = construct_coord(pos_x - 1, pos_y + 2);
+            if (get_color(data[new_pos]) != knight_color)
+                number_of_moves++;
+        }
+        if (pos_x + 1 < 8 && pos_y + 2 < 8)
+        {
+            //  O O
+            // O   O
+            //   N
+            // O   X
+            //  O O
+            new_pos = construct_coord(pos_x + 1, pos_y + 2);
+            if (get_color(data[new_pos]) != knight_color)
+                number_of_moves++;
+        }
+        if (pos_x + 2 < 8 && pos_y + 1 < 8)
+        {
+            //  O O
+            // O   O
+            //   N
+            // O   O
+            //  O X
+            new_pos = construct_coord(pos_x + 2, pos_y + 1);
+            if (get_color(data[new_pos]) != knight_color)
+                number_of_moves++;
+        }
+        if (pos_x + 2 < 8 && pos_y - 1 >= 0)
+        {
+            //  O O
+            // O   O
+            //   N
+            // O   O
+            //  X O
+            new_pos = construct_coord(pos_x + 2, pos_y - 1);
+            if (get_color(data[new_pos]) != knight_color)
+                number_of_moves++;
+        }
+        if (pos_x + 1 < 8 && pos_y - 2 >= 0)
+        {
+            //  O O
+            // O   O
+            //   N
+            // X   O
+            //  O O
+            new_pos = construct_coord(pos_x + 1, pos_y - 2);
+            if (get_color(data[new_pos]) != knight_color)
+                number_of_moves++;
+        }
+        if (pos_x - 1 >= 0 && pos_y - 2 >= 0)
+        {
+            //  O O
+            // X   O
+            //   N
+            // O   O
+            //  O O
+            new_pos = construct_coord(pos_x - 1, pos_y - 2);
+            if (get_color(data[new_pos]) != knight_color)
+                number_of_moves++;
+        }
+
+        return number_of_moves;
+    }
+
     /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
     /// @param moveset stores all legal possible move positions
@@ -536,6 +706,103 @@ public:
         }
         return number_of_moves;
     }
+
+    /// @brief generates noumber of legal moves for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of legal moves
+    inline int8_t generate_no_legal_moves_king(const int8_t pos, int8_t number_of_moves = 0) const
+    {
+
+        Color king_color = get_color(data[pos]);
+
+        int8_t pos_x = pos / width;
+        int8_t pos_y = pos % width;
+
+        int8_t new_pos;
+        if (pos_x - 1 >= 0 && pos_y - 1 >= 0)
+        {
+            // XOO
+            // OKO
+            // OOO
+
+            new_pos = construct_coord(pos_x - 1, pos_y - 1);
+            if (get_color(data[new_pos]) != king_color)
+                number_of_moves++;
+        }
+        if (pos_x - 1 >= 0)
+        {
+            // OXO
+            // OKO
+            // OOO
+
+            new_pos = construct_coord(pos_x - 1, pos_y);
+            if (get_color(data[new_pos]) != king_color)
+                number_of_moves++;
+        }
+        if (pos_x - 1 >= 0 && pos_y + 1 < 8)
+        {
+            // OOX
+            // OKO
+            // OOO
+
+            new_pos = construct_coord(pos_x - 1, pos_y + 1);
+            if (get_color(data[new_pos]) != king_color)
+                number_of_moves++;
+        }
+        if (pos_y - 1 >= 0)
+        {
+            // OOO
+            // XKO
+            // OOO
+
+            new_pos = construct_coord(pos_x, pos_y - 1);
+            if (get_color(data[new_pos]) != king_color)
+                number_of_moves++;
+        }
+        if (pos_y + 1 < 8)
+        {
+            // OOO
+            // OKX
+            // OOO
+
+            new_pos = construct_coord(pos_x, pos_y + 1);
+            if (get_color(data[new_pos]) != king_color)
+                number_of_moves++;
+        }
+        if (pos_x + 1 < 8 && pos_y - 1 >= 0)
+        {
+            // OOO
+            // OKO
+            // XOO
+
+            new_pos = construct_coord(pos_x + 1, pos_y - 1);
+            if (get_color(data[new_pos]) != king_color)
+                number_of_moves++;
+        }
+        if (pos_x + 1 < 8)
+        {
+            // OOO
+            // OKO
+            // OXO
+
+            new_pos = construct_coord(pos_x + 1, pos_y);
+            if (get_color(data[new_pos]) != king_color)
+                number_of_moves++;
+        }
+        if (pos_x + 1 < 8 && pos_y + 1 < 8)
+        {
+            // OOO
+            // OKO
+            // OOX
+
+            new_pos = construct_coord(pos_x + 1, pos_y + 1);
+            if (get_color(data[new_pos]) != king_color)
+                number_of_moves++;
+        }
+        return number_of_moves;
+    }
+
     /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
     /// @param moveset stores all legal possible move positions
@@ -609,6 +876,80 @@ public:
         }
         return number_of_moves;
     }
+
+    /// @brief generates noumber of legal moves for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of legal moves
+    inline uint8_t generate_no_legal_moves_rook(const int8_t pos, int8_t number_of_moves = 0) const
+    {
+
+        Color rook_color = get_color(data[pos]);
+
+        int8_t pos_x = pos / width;
+        int8_t pos_y = pos % width;
+
+        int8_t new_pos;
+
+        for (int8_t x = pos_x + 1; x < 8; x++)
+        {
+            // going down starting with position just under the rook
+            new_pos = construct_coord(x, pos_y);
+            if (data[new_pos] == empty)
+                number_of_moves++;
+            else if (get_color(data[new_pos]) != rook_color)
+            {
+                number_of_moves++;
+                break;
+            }
+            else
+                break;
+        }
+        for (int8_t x = pos_x - 1; x >= 0; x--)
+        {
+            // going up starting with position just above the rook
+            new_pos = construct_coord(x, pos_y);
+            if (data[new_pos] == empty)
+                number_of_moves++;
+            else if (get_color(data[new_pos]) != rook_color)
+            {
+                number_of_moves++;
+                break;
+            }
+            else
+                break;
+        }
+        for (int8_t y = pos_y + 1; y < 8; y++)
+        {
+            // going right starting with position just to the right from the rook
+            new_pos = construct_coord(pos_x, y);
+            if (data[new_pos] == empty)
+                number_of_moves++;
+            else if (get_color(data[new_pos]) != rook_color)
+            {
+                number_of_moves++;
+                break;
+            }
+            else
+                break;
+        }
+        for (int8_t y = pos_y - 1; y >= 0; y--)
+        {
+            // going left starting with position just to the left from the rook
+            new_pos = construct_coord(pos_x, y);
+            if (data[new_pos] == empty)
+                number_of_moves++;
+            else if (get_color(data[new_pos]) != rook_color)
+            {
+                number_of_moves++;
+                break;
+            }
+            else
+                break;
+        }
+        return number_of_moves;
+    }
+
     /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
     /// @param moveset stores all legal possible move positions
@@ -682,6 +1023,80 @@ public:
 
         return number_of_moves;
     }
+
+    /// @brief generates noumber of legal moves for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of legal moves
+    inline uint8_t generate_no_legal_moves_bishop(const int8_t pos, int8_t number_of_moves = 0) const
+    {
+
+        Color bishop_color = get_color(data[pos]);
+
+        int8_t pos_x = pos / width;
+        int8_t pos_y = pos % width;
+
+        int8_t new_pos;
+        for (int8_t x = pos_x + 1, y = pos_y + 1; x < 8 && y < 8; x++, y++)
+        {
+            // going down and right starting with position just to the right and down from the bishop
+            new_pos = construct_coord(x, y);
+            if (data[new_pos] == empty)
+                number_of_moves++;
+            else if (get_color(data[new_pos]) != bishop_color)
+            {
+                number_of_moves++;
+                break;
+            }
+            else
+                break;
+        }
+        for (int8_t x = pos_x + 1, y = pos_y - 1; x < 8 && y >= 0; x++, y--)
+        {
+            // going down and left starting with position just to the left and down from the bishop
+            new_pos = construct_coord(x, y);
+            if (data[new_pos] == empty)
+                number_of_moves++;
+            else if (get_color(data[new_pos]) != bishop_color)
+            {
+                number_of_moves++;
+                break;
+            }
+            else
+                break;
+        }
+        for (int8_t x = pos_x - 1, y = pos_y - 1; x >= 0 && y >= 0; x--, y--)
+        {
+            // going up and left starting with position just to the left and up from the bishop
+            new_pos = construct_coord(x, y);
+            if (data[new_pos] == empty)
+                number_of_moves++;
+            else if (get_color(data[new_pos]) != bishop_color)
+            {
+                number_of_moves++;
+                break;
+            }
+            else
+                break;
+        }
+        for (int8_t x = pos_x - 1, y = pos_y + 1; x >= 0 && y < 8; x--, y++)
+        {
+            // going up and right starting with position just to the right and up from the bishop
+            new_pos = construct_coord(x, y);
+            if (data[new_pos] == empty)
+                number_of_moves++;
+            else if (get_color(data[new_pos]) != bishop_color)
+            {
+                number_of_moves++;
+                break;
+            }
+            else
+                break;
+        }
+
+        return number_of_moves;
+    }
+
     /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
     /// @param moveset stores all legal possible move positions
@@ -692,6 +1107,19 @@ public:
         // queen is basically rook & bishop at once, so why even bother?
         number_of_moves = generate_legal_moveset_rook(pos, moveset, number_of_moves);
         number_of_moves = generate_legal_moveset_bishop(pos, moveset, number_of_moves);
+
+        return number_of_moves;
+    }
+
+    /// @brief generates noumber of legal moves for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of legal moves
+    inline uint8_t generate_no_legal_moves_queen(const int8_t pos, int8_t number_of_moves = 0) const
+    {
+        // queen is basically rook & bishop at once, so why even bother?
+        number_of_moves = generate_no_legal_moves_rook(pos, number_of_moves);
+        number_of_moves = generate_no_legal_moves_bishop(pos, number_of_moves);
 
         return number_of_moves;
     }
@@ -816,9 +1244,6 @@ public:
 
     inline int16_t estimate_position() const
     {
-        int8_t pawn_moves[64]; // compiler will allocate this memory only once,
-                               // so the fact that it's deleted at the end of this function will not slow down the code
-
         int16_t estimation = 0;
         for (int8_t i = 0; i < 64; i++)
         {
@@ -829,49 +1254,49 @@ public:
                 switch (data[i])
                 {
                 case b_pawn:
-                    estimation -= 10 * generate_legal_moveset_pawn(i, pawn_moves);
+                    estimation -= 10 * generate_no_legal_moves_pawn(i);
                     estimation -= white_pawn_placement_weight_matrix[63 - i];
                     break;
                 case w_pawn:
-                    estimation += 10 * generate_legal_moveset_pawn(i, pawn_moves);
+                    estimation += 10 * generate_no_legal_moves_pawn(i);
                     estimation += white_pawn_placement_weight_matrix[i];
                     break;
                 case b_knight:
-                    estimation -= 10 * generate_legal_moveset_knight(i, pawn_moves);
+                    estimation -= 10 * generate_no_legal_moves_knight(i);
                     estimation -= knight_placement_weight_matrix[63 - i];
                     break;
                 case w_knight:
-                    estimation += 10 * generate_legal_moveset_knight(i, pawn_moves);
+                    estimation += 10 * generate_no_legal_moves_knight(i);
                     estimation += knight_placement_weight_matrix[i];
                     break;
                 case b_king:
-                    estimation -= 10 * generate_legal_moveset_king(i, pawn_moves);
+                    estimation -= 10 * generate_no_legal_moves_king(i);
                     break;
                 case w_king:
-                    estimation += 10 * generate_legal_moveset_king(i, pawn_moves);
+                    estimation += 10 * generate_no_legal_moves_king(i);
                     break;
                 case b_rook:
-                    estimation -= 10 * generate_legal_moveset_rook(i, pawn_moves);
+                    estimation -= 10 * generate_no_legal_moves_rook(i);
                     estimation -= rook_placement_weight_matrix[63 - i];
                     break;
                 case w_rook:
-                    estimation += 10 * generate_legal_moveset_rook(i, pawn_moves);
+                    estimation += 10 * generate_no_legal_moves_rook(i);
                     estimation += rook_placement_weight_matrix[i];
                     break;
                 case b_bishop:
-                    estimation -= 10 * generate_legal_moveset_bishop(i, pawn_moves);
+                    estimation -= 10 * generate_no_legal_moves_bishop(i);
                     estimation -= bishop_placement_weight_matrix[63 - i];
                     break;
                 case w_bishop:
-                    estimation += 10 * generate_legal_moveset_bishop(i, pawn_moves);
+                    estimation += 10 * generate_no_legal_moves_bishop(i);
                     estimation += bishop_placement_weight_matrix[i];
                     break;
                 case b_queen:
-                    estimation -= 10 * generate_legal_moveset_queen(i, pawn_moves);
+                    estimation -= 10 * generate_no_legal_moves_queen(i);
                     estimation -= queen_placement_weight_matrix[63 - i];
                     break;
                 case w_queen:
-                    estimation += 10 * generate_legal_moveset_queen(i, pawn_moves);
+                    estimation += 10 * generate_no_legal_moves_queen(i);
                     estimation += queen_placement_weight_matrix[i];
                     break;
                 default:
@@ -891,15 +1316,15 @@ public:
         for (uint8_t i = 0; i < no_moves; i++)
         {
 
-            auto from = Piece(data[starting_positions[i]]);
-            auto to = Piece(data[moveset[i]]);
+            auto from = data[starting_positions[i]];
+            auto to = data[moveset[i]];
 
             move(starting_positions[i], moveset[i]);
 
             estimations[i] = alpha_beta(depth, -20000, 20000, color);
 
-            data[starting_positions[i]] = Piece(from);
-            data[moveset[i]] = Piece(to);
+            data[starting_positions[i]] = from;
+            data[moveset[i]] = to;
         }
     }
 
