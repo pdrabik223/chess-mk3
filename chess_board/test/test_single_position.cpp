@@ -136,8 +136,8 @@ void generate_test_cases(int no_of_test)
   board.data[random(0, 64)] = w_knight;
 
   // calculate statistics
-  char moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  char starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
+  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
+  int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
   float estimations[MAX_NO_MOVES_IN_EACH_BOARD];
   int no_moves = board.generate_legal_moveset_for_color(white, starting_positions, moves);
   float position_estimation = board.estimate_position();

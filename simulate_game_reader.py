@@ -43,7 +43,7 @@ class SimulateGameTestCase:
         if no_moves > 0:
             starting_positions = [int(pos) for pos in test_params[11].split(" ")]
             moves = [int(pos) for pos in test_params[13].split(" ")]
-            moves_estimation = [float(pos) for pos in test_params[15].split(" ")]
+            moves_estimation = [int(pos) for pos in test_params[15].split(" ")]
 
             board.starting_positions = starting_positions
             board.moves_estimation = moves_estimation
@@ -54,7 +54,7 @@ class SimulateGameTestCase:
             iteration=int(test_params[1]),
             color=test_params[3],
             board=board,
-            position_estimation=float(test_params[7]),
+            position_estimation=int(test_params[7]),
             no_moves=no_moves,
             starting_positions=starting_positions,
             moves=moves,
@@ -68,16 +68,16 @@ if __name__ == "__main__":
     with open('output.txt', 'w') as f:
         while True:
             resp: bytes = device.readline()
-            print(resp.decode("utf-8"))
-            f.writelines(resp.decode("utf-8"))
+            # print(resp)
+            # f.writelines(resp.decode("utf-8"))
             try:
-                # if "iteration_end" in resp.decode("utf-8"):
-                #     buffer = buffer + resp.decode("utf-8")
-                #     test_example = SimulateGameTestCase.parse_string(buffer)
-                #     test_example.board.display_using_unicode()
-                #     buffer = ""
-                # else:
-                #     buffer = buffer + resp.decode("utf-8")
+                if "iteration_end" in resp.decode("utf-8"):
+                    buffer = buffer + resp.decode("utf-8")
+                    test_example = SimulateGameTestCase.parse_string(buffer)
+                    test_example.board.display_using_unicode()
+                    buffer = ""
+                else:
+                    buffer = buffer + resp.decode("utf-8")
                 pass
             except Exception as ex:
                 print("error:", str(ex), "raw:", resp, "decoded:", resp.decode("utf-8"))
