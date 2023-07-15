@@ -2,11 +2,57 @@
 #ifndef BOARD_H
 #define BOARD_H
 #include <stdint.h> /// for special uint tyoes like int8_t
-#define MAX_NO_MOVES_IN_EACH_BOARD 128
+#define MAX_NO_MOVES_IN_EACH_BOARD 100
+#define MAX_NO_PIECES_ON_BOARD 32
+// TODO:
+//  https://www.chessprogramming.org/Simplified_Evaluation_Function
 
-const int8_t symbol_encoding[13]{'e', 'p', 'n', 'b', 'r', 'q', 'k', 'P', 'N', 'B', 'R', 'Q', 'K'};
-const int weight_encoding[13]{0, 1, 3, 3, 5, 9, 1000, -1, -3, -3, -5, -9, -1000};
+const char symbol_encoding[13]{'e', 'p', 'n', 'b', 'r', 'q', 'k', 'P', 'N', 'B', 'R', 'Q', 'K'};
+const int16_t weight_encoding[13]{0, 100, 320, 330, 500, 900, 20000, -100, -320, -350, -500, -900, -20000};
+const int8_t white_pawn_placement_weight_matrix[64]{0, 0, 0, 0, 0, 0, 0, 0,
+                                                    50, 50, 50, 50, 50, 50, 50, 50,
+                                                    10, 10, 20, 30, 30, 20, 10, 10,
+                                                    5, 5, 10, 25, 25, 10, 5, 5,
+                                                    0, 0, 0, 20, 20, 0, 0, 0,
+                                                    5, -5, -10, 0, 0, -10, -5, 5,
+                                                    5, 10, 10, -20, -20, 10, 10, 5,
+                                                    0, 0, 0, 0, 0, 0, 0, 0};
 
+const int8_t knight_placement_weight_matrix[64]{-50, -40, -30, -30, -30, -30, -40, -50,
+                                                -40, -20, 0, 0, 0, 0, -20, -40,
+                                                -30, 0, 10, 15, 15, 10, 0, -30,
+                                                -30, 5, 15, 20, 20, 15, 5, -30,
+                                                -30, 0, 15, 20, 20, 15, 0, -30,
+                                                -30, 5, 10, 15, 15, 10, 5, -30,
+                                                -40, -20, 0, 5, 5, 0, -20, -40,
+                                                -50, -40, -30, -30, -30, -30, -40, -50};
+
+const int8_t bishop_placement_weight_matrix[64]{-20, -10, -10, -10, -10, -10, -10, -20,
+                                                -10, 0, 0, 0, 0, 0, 0, -10,
+                                                -10, 0, 5, 10, 10, 5, 0, -10,
+                                                -10, 5, 5, 10, 10, 5, 5, -10,
+                                                -10, 0, 10, 10, 10, 10, 0, -10,
+                                                -10, 10, 10, 10, 10, 10, 10, -10,
+                                                -10, 5, 0, 0, 0, 0, 5, -10,
+                                                -20, -10, -10, -10, -10, -10, -10, -20};
+
+const int8_t rook_placement_weight_matrix[64]{0, 0, 0, 0, 0, 0, 0, 0,
+                                              5, 10, 10, 10, 10, 10, 10, 5,
+                                              -5, 0, 0, 0, 0, 0, 0, -5,
+                                              -5, 0, 0, 0, 0, 0, 0, -5,
+                                              -5, 0, 0, 0, 0, 0, 0, -5,
+                                              -5, 0, 0, 0, 0, 0, 0, -5,
+                                              -5, 0, 0, 0, 0, 0, 0, -5,
+                                              0, 0, 0, 5, 5, 0, 0, 0};
+
+const int8_t queen_placement_weight_matrix[64]{-20, -10, -10, -5, -5, -10, -10, -20,
+                                               -10, 0, 0, 0, 0, 0, 0, -10,
+                                               -10, 0, 5, 5, 5, 5, 0, -10,
+                                               -5, 0, 5, 5, 5, 5, 0, -5,
+                                               0, 0, 5, 5, 5, 5, 0, -5,
+                                               -10, 5, 5, 5, 5, 5, 0, -10,
+                                               -10, 0, 5, 0, 0, 0, 0, -10,
+                                               -20, -10, -10, -5, -5, -10, -10, -20};
 enum Piece : int8_t
 {
     empty = 0,
@@ -24,13 +70,13 @@ enum Piece : int8_t
     b_queen = 11,
     b_king = 12
 };
-bool is_white(Piece piece)
+inline bool is_white(Piece piece)
 {
     if (piece >= w_pawn && piece <= w_king)
         return true;
     return false;
 }
-bool is_black(Piece piece)
+inline bool is_black(Piece piece)
 {
     if (piece >= b_pawn && piece <= b_king)
         return true;
@@ -44,7 +90,7 @@ enum Color : int8_t
     black,
 };
 
-Color get_color(Piece piece)
+inline Color get_color(Piece piece)
 {
     if (piece >= w_pawn && piece <= w_king)
         return white;
@@ -52,7 +98,14 @@ Color get_color(Piece piece)
         return black;
     return no_color;
 }
-
+Color reverse_color(const Color current_color)
+{
+    if (current_color == white)
+        return black;
+    if (current_color == black)
+        return white;
+    return current_color;
+}
 class Board
 {
 
@@ -126,19 +179,12 @@ public:
         data[55] = w_pawn;
     }
 
-    void set_piece(uint8_t x, uint8_t y, Piece piece)
+    inline void set_piece(uint8_t x, uint8_t y, Piece piece)
     {
         data[x * 8 + y] = piece;
     }
 
-    Piece &get_piece(const int8_t position)
-    {
-        if (position < 0 || position > 64)
-            Serial.println("error in get_piece position is:" + position);
-        return data[position];
-    }
-
-    void from_string(const String &board_str)
+    inline void from_string(const String &board_str)
     {
 
         for (int8_t i = 0; i < 64; i++)
@@ -188,7 +234,7 @@ public:
         }
     }
 
-    void to_string(char *board_str)
+    inline void to_string(char *board_str)
     {
         for (int8_t i = 0; i < 64; i++)
         {
@@ -196,7 +242,7 @@ public:
         }
         board_str[64] = '\0';
     }
-    void move(int8_t prev_pos, int8_t new_pos)
+    inline void move(int8_t prev_pos, int8_t new_pos)
     {
         if (new_pos / width == 0 && data[prev_pos] == w_pawn)
             // white pawn piece upgrade to queen
@@ -211,15 +257,15 @@ public:
         data[prev_pos] = empty;
     }
 
-    int8_t construct_coord(int8_t x, int8_t y) const
+    inline int8_t construct_coord(int8_t x, int8_t y) const
     {
         return x * 8 + y;
     }
-    int8_t deconstruct_coord_x(int8_t coord) const
+    inline int8_t deconstruct_coord_x(int8_t coord) const
     {
         return coord / 8;
     }
-    int8_t deconstruct_coord_y(int8_t coord) const
+    inline int8_t deconstruct_coord_y(int8_t coord) const
     {
         return coord % 8;
     }
@@ -229,7 +275,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_pawn(int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+    inline int8_t generate_legal_moveset_pawn(int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
 
         Color pawn_color = get_color(data[pos]);
@@ -293,7 +339,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+    inline int8_t generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
 
         Color knight_color = get_color(data[pos]);
@@ -399,7 +445,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+    inline int8_t generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
 
         Color king_color = get_color(data[pos]);
@@ -495,7 +541,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_rook(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+    inline uint8_t generate_legal_moveset_rook(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
 
         Color rook_color = get_color(data[pos]);
@@ -568,7 +614,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_bishop(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+    inline uint8_t generate_legal_moveset_bishop(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
 
         Color bishop_color = get_color(data[pos]);
@@ -641,7 +687,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    int generate_legal_moveset_queen(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+    inline uint8_t generate_legal_moveset_queen(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
     {
         // queen is basically rook & bishop at once, so why even bother?
         number_of_moves = generate_legal_moveset_rook(pos, moveset, number_of_moves);
@@ -654,72 +700,127 @@ public:
     /// @param color color for which all moves possible will be generated
     /// @param moveset stores all legal possible move positions
     /// @return Number of legal moves
-    int generate_legal_moveset_for_color(Color color, int8_t *starting_positions, int8_t *moveset) const
+    inline uint8_t generate_legal_moveset_for_color(Color color, int8_t *starting_positions, int8_t *moveset) const
     {
-        int number_of_moves = 0;
-        int new_no_moves;
+
+        int8_t queens_position = -1;
+
+        int8_t rooks_positions[2];
+        int8_t rooks_index = 0;
+
+        int8_t bishops_positions[2];
+        int8_t bishops_index = 0;
+
+        int8_t knights_positions[2];
+        int8_t knights_index = 0;
+
+        int8_t pawns_positions[8];
+        int8_t pawns_index = 0;
+
+        int8_t kings_position = -1;
+
         for (int8_t i = 0; i < 64; i++)
         {
             if (get_color(data[i]) == color)
-            {
-                if (data[i] == b_pawn || data[i] == w_pawn)
+                switch (data[i])
                 {
-
-                    new_no_moves = generate_legal_moveset_pawn(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < new_no_moves; j++)
-                        starting_positions[j] = i;
-                    number_of_moves = new_no_moves;
+                case w_pawn:
+                    pawns_positions[pawns_index++] = i;
+                    break;
+                case w_knight:
+                    knights_positions[knights_index++] = i;
+                    break;
+                case w_bishop:
+                    bishops_positions[bishops_index++] = i;
+                    break;
+                case w_rook:
+                    rooks_positions[rooks_index++] = i;
+                    break;
+                case w_queen:
+                    queens_position = i;
+                    break;
+                case w_king:
+                    kings_position = i;
+                    break;
+                case b_pawn:
+                    pawns_positions[pawns_index++] = i;
+                    break;
+                case b_knight:
+                    knights_positions[knights_index++] = i;
+                    break;
+                case b_bishop:
+                    bishops_positions[bishops_index++] = i;
+                    break;
+                case b_rook:
+                    rooks_positions[rooks_index++] = i;
+                    break;
+                case b_queen:
+                    queens_position = i;
+                    break;
+                case b_king:
+                    kings_position = i;
+                    break;
+                default:
+                    break;
                 }
-                else if (data[i] == b_knight || data[i] == w_knight)
-                {
-
-                    new_no_moves = generate_legal_moveset_knight(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < new_no_moves; j++)
-                        starting_positions[j] = i;
-                    number_of_moves = new_no_moves;
-                }
-                else if (data[i] == b_king || data[i] == w_king)
-                {
-
-                    new_no_moves = generate_legal_moveset_king(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < new_no_moves; j++)
-                        starting_positions[j] = i;
-                    number_of_moves = new_no_moves;
-                }
-                else if (data[i] == b_rook || data[i] == w_rook)
-                {
-
-                    new_no_moves = generate_legal_moveset_rook(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < new_no_moves; j++)
-                        starting_positions[j] = i;
-                    number_of_moves = new_no_moves;
-                }
-                else if (data[i] == b_bishop || data[i] == w_bishop)
-                {
-
-                    new_no_moves = generate_legal_moveset_bishop(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < new_no_moves; j++)
-                        starting_positions[j] = i;
-                    number_of_moves = new_no_moves;
-                }
-                else if (data[i] == b_queen || data[i] == w_queen)
-                {
-
-                    new_no_moves = generate_legal_moveset_queen(i, moveset, number_of_moves);
-                    for (int j = number_of_moves; j < new_no_moves; j++)
-                        starting_positions[j] = i;
-                    number_of_moves = new_no_moves;
-                }
-            }
         }
+
+        int number_of_moves = 0;
+        int new_no_moves;
+
+        for (int8_t p = 0; p < pawns_index; p++)
+        {
+            new_no_moves = generate_legal_moveset_pawn(pawns_positions[p], moveset, number_of_moves);
+            for (int8_t j = number_of_moves; j < new_no_moves; j++)
+                starting_positions[j] = pawns_positions[p];
+            number_of_moves = new_no_moves;
+        }
+        for (int8_t k = 0; k < knights_index; k++)
+        {
+            new_no_moves = generate_legal_moveset_knight(knights_positions[k], moveset, number_of_moves);
+            for (int8_t j = number_of_moves; j < new_no_moves; j++)
+                starting_positions[j] = knights_positions[k];
+            number_of_moves = new_no_moves;
+        }
+        if (queens_position != -1)
+        {
+            new_no_moves = generate_legal_moveset_queen(queens_position, moveset, number_of_moves);
+            for (int8_t j = number_of_moves; j < new_no_moves; j++)
+                starting_positions[j] = queens_position;
+            number_of_moves = new_no_moves;
+        }
+        for (int8_t b = 0; b < bishops_index; b++)
+        {
+            new_no_moves = generate_legal_moveset_bishop(bishops_positions[b], moveset, number_of_moves);
+            for (int8_t j = number_of_moves; j < new_no_moves; j++)
+                starting_positions[j] = bishops_positions[b];
+            number_of_moves = new_no_moves;
+        }
+        for (int8_t r = 0; r < rooks_index; r++)
+        {
+            new_no_moves = generate_legal_moveset_rook(rooks_positions[r], moveset, number_of_moves);
+            for (int8_t j = number_of_moves; j < new_no_moves; j++)
+                starting_positions[j] = rooks_positions[r];
+            number_of_moves = new_no_moves;
+        }
+        if (kings_position != -1)
+        {
+            new_no_moves = generate_legal_moveset_king(kings_position, moveset, number_of_moves);
+            for (int8_t j = number_of_moves; j < new_no_moves; j++)
+                starting_positions[j] = kings_position;
+            number_of_moves = new_no_moves;
+        }
+
         return number_of_moves;
     }
 
-    float estimate_position() const
+    inline int16_t estimate_position() const
     {
-        int8_t pawn_moves[64];
-        float estimation = 0;
-        for (int i = 0; i < 64; i++)
+        int8_t pawn_moves[64]; // compiler will allocate this memory only once,
+                               // so the fact that it's deleted at the end of this function will not slow down the code
+
+        int16_t estimation = 0;
+        for (int8_t i = 0; i < 64; i++)
         {
             if (data[i] != empty)
             {
@@ -728,40 +829,50 @@ public:
                 switch (data[i])
                 {
                 case b_pawn:
-                    estimation -= 0.1 * generate_legal_moveset_pawn(i, pawn_moves);
+                    estimation -= 10 * generate_legal_moveset_pawn(i, pawn_moves);
+                    estimation -= white_pawn_placement_weight_matrix[63 - i];
                     break;
                 case w_pawn:
-                    estimation += 0.1 * generate_legal_moveset_pawn(i, pawn_moves);
+                    estimation += 10 * generate_legal_moveset_pawn(i, pawn_moves);
+                    estimation += white_pawn_placement_weight_matrix[i];
                     break;
                 case b_knight:
-                    estimation -= 0.1 * generate_legal_moveset_knight(i, pawn_moves);
+                    estimation -= 10 * generate_legal_moveset_knight(i, pawn_moves);
+                    estimation -= knight_placement_weight_matrix[63 - i];
                     break;
                 case w_knight:
-                    estimation += 0.1 * generate_legal_moveset_knight(i, pawn_moves);
+                    estimation += 10 * generate_legal_moveset_knight(i, pawn_moves);
+                    estimation += knight_placement_weight_matrix[i];
                     break;
                 case b_king:
-                    estimation -= 0.1 * generate_legal_moveset_king(i, pawn_moves);
+                    estimation -= 10 * generate_legal_moveset_king(i, pawn_moves);
                     break;
                 case w_king:
-                    estimation += 0.1 * generate_legal_moveset_king(i, pawn_moves);
+                    estimation += 10 * generate_legal_moveset_king(i, pawn_moves);
                     break;
                 case b_rook:
-                    estimation -= 0.1 * generate_legal_moveset_rook(i, pawn_moves);
+                    estimation -= 10 * generate_legal_moveset_rook(i, pawn_moves);
+                    estimation -= rook_placement_weight_matrix[63 - i];
                     break;
                 case w_rook:
-                    estimation += 0.1 * generate_legal_moveset_rook(i, pawn_moves);
+                    estimation += 10 * generate_legal_moveset_rook(i, pawn_moves);
+                    estimation += rook_placement_weight_matrix[i];
                     break;
                 case b_bishop:
-                    estimation -= 0.1 * generate_legal_moveset_bishop(i, pawn_moves);
+                    estimation -= 10 * generate_legal_moveset_bishop(i, pawn_moves);
+                    estimation -= bishop_placement_weight_matrix[63 - i];
                     break;
                 case w_bishop:
-                    estimation += 0.1 * generate_legal_moveset_bishop(i, pawn_moves);
+                    estimation += 10 * generate_legal_moveset_bishop(i, pawn_moves);
+                    estimation += bishop_placement_weight_matrix[i];
                     break;
                 case b_queen:
-                    estimation -= 0.1 * generate_legal_moveset_queen(i, pawn_moves);
+                    estimation -= 10 * generate_legal_moveset_queen(i, pawn_moves);
+                    estimation -= queen_placement_weight_matrix[63 - i];
                     break;
                 case w_queen:
-                    estimation += 0.1 * generate_legal_moveset_queen(i, pawn_moves);
+                    estimation += 10 * generate_legal_moveset_queen(i, pawn_moves);
+                    estimation += queen_placement_weight_matrix[i];
                     break;
                 default:
                     break;
@@ -770,14 +881,14 @@ public:
         }
         return estimation;
     }
-    void estimate_all_moves_for_color(int8_t depth, Color color, const int no_moves, int8_t *starting_positions, int8_t *moveset, float *estimations)
+    inline void estimate_all_moves_for_color(const int8_t depth, Color color, const uint8_t no_moves, int8_t *starting_positions, int8_t *moveset, int16_t *estimations)
     {
         if (color == white)
             color = black;
         else
             color = white;
 
-        for (int i = 0; i < no_moves; i++)
+        for (uint8_t i = 0; i < no_moves; i++)
         {
 
             auto from = Piece(data[starting_positions[i]]);
@@ -785,32 +896,32 @@ public:
 
             move(starting_positions[i], moveset[i]);
 
-            estimations[i] = alpha_beta(depth, -2000, 2000, color);
+            estimations[i] = alpha_beta(depth, -20000, 20000, color);
 
             data[starting_positions[i]] = Piece(from);
             data[moveset[i]] = Piece(to);
         }
     }
 
-    float alpha_beta(const int depth, float alpha, float beta, const Color player_color)
+    int16_t alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color)
     {
 
-        float current_estimation = estimate_position();
-        if (depth <= 0 || current_estimation < -900 || current_estimation > 900)
+        int16_t current_estimation = estimate_position();
+        if (depth <= 0 || current_estimation < -15000 || current_estimation > 15000)
             return current_estimation;
 
         int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
         int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-        int no_moves = generate_legal_moveset_for_color(player_color, starting_positions, moves);
+        uint8_t no_moves = generate_legal_moveset_for_color(player_color, starting_positions, moves);
 
         Piece from;
         Piece to;
         if (player_color == white)
         {
             if (no_moves == 0)
-                return -1000;
-            float result = -1000;
-            for (int i = 0; i < no_moves; i++)
+                return -20000;
+            int16_t result = -20000;
+            for (int8_t i = 0; i < no_moves; i++)
             {
                 from = data[starting_positions[i]];
                 to = data[moves[i]];
@@ -821,18 +932,18 @@ public:
                 data[starting_positions[i]] = from;
                 data[moves[i]] = to;
 
-                alpha = max(alpha, result);
                 if (result >= beta)
                     break;
+                alpha = max(alpha, result);
             }
             return result;
         }
         else
         {
             if (no_moves == 0)
-                return 1000;
-            float result = 1000;
-            for (int i = 0; i < no_moves; i++)
+                return 20000;
+            int16_t result = 20000;
+            for (int8_t i = 0; i < no_moves; i++)
             {
 
                 from = data[starting_positions[i]];
@@ -844,13 +955,83 @@ public:
                 data[starting_positions[i]] = from;
                 data[moves[i]] = to;
 
-                beta = min(beta, result);
                 if (result <= alpha)
                     break;
+                beta = min(beta, result);
             }
             return result;
         }
     }
+
+    // float alpha_beta_but_linear(const int depth, float alpha, float beta, const Color player_color)
+    // {
+
+    //     int8_t **moves = new int8_t *[depth];
+    //     int8_t **starting_positions = new int8_t *[depth];
+    //     int *no_moves = new int[depth];
+    //     for (int i = 0; i < depth; i++)
+    //     {
+    //         moves[i] = new int8_t[MAX_NO_MOVES_IN_EACH_BOARD];
+    //         starting_positions[i] = new int8_t[MAX_NO_MOVES_IN_EACH_BOARD];
+    //     }
+
+    //     for (int iteration = 0; iteration < depth; iteration++)
+    //     {
+    //         float current_estimation = estimate_position();
+    //         if (current_estimation < -900 || current_estimation > 900)
+    //             return current_estimation;
+
+    //         no_moves[iteration] = generate_legal_moveset_for_color(player_color, starting_positions[iteration], moves[iteration]);
+
+    //         Piece from;
+    //         Piece to;
+    //         if (player_color == white)
+    //         {
+    //             if (no_moves == 0)
+    //                 return -1000;
+    //             float result = -1000;
+    //             for (int i = 0; i < no_moves; i++)
+    //             {
+    //                 from = data[starting_positions[iteration][i]];
+    //                 to = data[moves[iteration][i]];
+
+    //                 move(starting_positions[iteration][i], moves[iteration][i]);
+    //                 result = max(result, alpha_beta(depth - 1, alpha, beta, black));
+
+    //                 data[starting_positions[iteration][i]] = from;
+    //                 data[moves[iteration][i]] = to;
+
+    //                 alpha = max(alpha, result);
+    //                 if (result >= beta)
+    //                     break;
+    //             }
+    //             return result;
+    //         }
+    //         else
+    //         {
+    //             if (no_moves == 0)
+    //                 return 1000;
+    //             float result = 1000;
+    //             for (int i = 0; i < no_moves; i++)
+    //             {
+
+    //                 from = data[starting_positions[iteration][i]];
+    //                 to = data[moves[iteration][i]];
+
+    //                 move(starting_positions[iteration][i], moves[iteration][i]);
+    //                 result = min(result, alpha_beta(depth - 1, alpha, beta, white));
+
+    //                 data[starting_positions[iteration][i]] = from;
+    //                 data[moves[iteration][i]] = to;
+
+    //                 beta = min(beta, result);
+    //                 if (result <= alpha)
+    //                     break;
+    //             }
+    //             return result;
+    //         }
+    //     }
+    // }
 };
 
 #endif
