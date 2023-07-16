@@ -9,6 +9,8 @@ int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
 
 bool simulate_game_for_color_w_time_measure(const int no_iteration, const Color color, Board &board, const int8_t recursion_depth)
 {
+    Serial.println(":iteration:");
+    Serial.println(no_iteration);
     auto t_1 = millis();
     int no_moves = board.generate_legal_moveset_for_color(color, starting_positions, moves);
     board.estimate_all_moves_for_color(recursion_depth, color, no_moves, starting_positions, moves, estimations);
@@ -53,8 +55,6 @@ bool simulate_game_for_color_w_time_measure(const int no_iteration, const Color 
     board.move(starting_positions[best_move_id], moves[best_move_id]);
 
     auto time = millis() - t_1;
-    Serial.println(":iteration:");
-    Serial.println(no_iteration);
     Serial.println(":color:");
     if (color == white)
         Serial.println("white");
@@ -88,7 +88,6 @@ bool simulate_game_for_color(const int no_iteration, const Color color, Board &b
     else
         Serial.println("black");
 
-    Serial.flush();
     int8_t no_moves = board.generate_legal_moveset_for_color(color, starting_positions, moves);
     int16_t position_estimation = board.estimate_position();
 
@@ -166,12 +165,12 @@ void simulate_game()
     while (true)
     {
 
-        if (simulate_game_for_color(no_iteration, black, board, 2))
+        if (simulate_game_for_color(no_iteration, white, board, 2))
             return;
 
         delay(1000);
 
-        if (simulate_game_for_color(no_iteration, white, board, 2))
+        if (simulate_game_for_color(no_iteration, black, board, 2))
             return;
 
         delay(1000);
@@ -186,12 +185,12 @@ void simulate_game_w_time()
     Board board(true);
     while (true)
     {
-        if (simulate_game_for_color_w_time_measure(no_iteration, white, board, 1))
+        if (simulate_game_for_color_w_time_measure(no_iteration, white, board, 2))
             return;
 
         delay(1000);
 
-        if (simulate_game_for_color_w_time_measure(no_iteration, black, board, 1))
+        if (simulate_game_for_color_w_time_measure(no_iteration, black, board, 2))
             return;
 
         delay(1000);
@@ -209,12 +208,13 @@ void check_for_mat_in_2()
     board.set_piece(7, 5, w_king);
     while (true)
     {
-        if (simulate_game_for_color(no_iteration, black, board, 2))
+
+        if (simulate_game_for_color(no_iteration, white, board, 3))
             return;
 
         delay(1000);
 
-        if (simulate_game_for_color(no_iteration, white, board, 2))
+        if (simulate_game_for_color(no_iteration, black, board, 3))
             return;
 
         delay(1000);
@@ -230,5 +230,5 @@ void setup()
 
 void loop()
 {
-    simulate_game();
+    check_for_mat_in_2();
 }
