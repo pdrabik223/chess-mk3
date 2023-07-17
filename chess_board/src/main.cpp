@@ -230,5 +230,5 @@ void setup()
 
 void loop()
 {
-    check_for_mat_in_2();
+    simulate_game();
 }

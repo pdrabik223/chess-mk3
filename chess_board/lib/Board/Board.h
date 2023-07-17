@@ -181,7 +181,6 @@ public:
 
     int16_t pvs(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
 
-private:
     Piece data[64];
     const int8_t width = 8;
     const int8_t height = 8;

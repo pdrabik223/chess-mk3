@@ -422,7 +422,7 @@ uint16_t generate_no_legal_moves_queen(const Piece *data, const int8_t pos)
     uint16_t number_of_moves = 0;
     //  queen is basically rook & bishop at once, so why even bother?
     number_of_moves = generate_no_legal_moves_rook(data, pos);
-    number_of_moves = generate_no_legal_moves_bishop(data, pos);
+    number_of_moves += generate_no_legal_moves_bishop(data, pos);
 
     return number_of_moves;
 }
@@ -890,6 +890,7 @@ uint8_t Board::generate_legal_moveset_rook(const int8_t pos, int8_t *moveset, in
 
     int8_t pos_x = pos / width;
     int8_t pos_y = pos % width;
+    delayMicroseconds(83);
 
     int8_t new_pos;
 
