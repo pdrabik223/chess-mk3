@@ -1196,9 +1196,18 @@ void Board::estimate_all_moves_for_color(const int8_t depth, Color color, const 
 
 int16_t Board::alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color)
 {
-    int16_t current_estimation = estimate_position();
-    if (depth <= 0 || current_estimation < -15000 || current_estimation > 15000)
-        return current_estimation;
+    // int16_t current_estimation = estimate_position();
+    // if (depth <= 0 || current_estimation < -15000 || current_estimation > 15000)
+    //     return current_estimation;
+
+    if (depth <= 0)
+        return estimate_position();
+
+    if (!check_for_white_king())
+        return weight_encoding[b_king];
+
+    if (!check_for_black_king())
+        return weight_encoding[w_king];
 
     int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
     int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
@@ -1209,8 +1218,8 @@ int16_t Board::alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const
     if (player_color == white)
     {
         if (no_moves == 0)
-            return -20000;
-        int16_t result = -20000;
+            return weight_encoding[b_king];
+        int16_t result = weight_encoding[b_king];
         for (int8_t i = 0; i < no_moves; i++)
         {
             from = data[starting_positions[i]];
@@ -1231,8 +1240,8 @@ int16_t Board::alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const
     else
     {
         if (no_moves == 0)
-            return 20000;
-        int16_t result = 20000;
+            return weight_encoding[w_king];
+        int16_t result = weight_encoding[w_king];
         for (int8_t i = 0; i < no_moves; i++)
         {
 
@@ -1313,4 +1322,20 @@ int16_t Board::pvs(const int8_t depth, int16_t alpha, int16_t beta, const Color 
             break;
     }
     return alpha;
+}
+
+bool Board::check_for_white_king()
+{
+    for (int i = 63; i >= 0; i--)
+        if (data[i] == w_king)
+            return true;
+
+    return false;
+}
+bool Board::check_for_black_king()
+{
+    for (int i = 0; i < 64; i++)
+        if (data[i] == b_king)
+            return true;
+    return false;
 }

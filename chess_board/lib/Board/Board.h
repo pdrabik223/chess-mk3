@@ -1,11 +1,12 @@
 #include <String.h>
 #include <MeasTime.h>
 #include <Piece.h>
+#include <MoveSet.h>
 #ifndef BOARD_H
 #define BOARD_H
 #include <stdint.h> /// for special uint tyoes like int8_t
-#define MAX_NO_MOVES_IN_EACH_BOARD 100
-#define MAX_NO_PIECES_ON_BOARD 32
+// #define MAX_NO_MOVES_IN_EACH_BOARD 100
+// #define MAX_NO_PIECES_ON_BOARD 32
 
 // TODO:
 //  https://www.chessprogramming.org/Simplified_Evaluation_Function
@@ -180,6 +181,9 @@ public:
     int16_t alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
 
     int16_t pvs(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
+
+    bool check_for_white_king();
+    bool check_for_black_king();
 
     Piece data[64];
     const int8_t width = 8;
