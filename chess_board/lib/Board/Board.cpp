@@ -675,7 +675,7 @@ void Board::generate_legal_moveset_pawn(int8_t pos, MoveSet &moves) const
 /// @param moveset stores all legal possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
+__attribute__((always_inline)) void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
 {
 
     // MeasTime timer("generate_legal_moveset_knight");
@@ -685,95 +685,471 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
     int8_t pos_y = pos % width;
 
     int8_t new_pos;
+    void *tab[64] = {
 
-    if (pos_x - 2 >= 0 && pos_y - 1 >= 0)
-    {
-        //  X O
-        // O   O
-        //   N
-        // O   O
-        //  O O
-        new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x - 2 >= 0 && pos_y + 1 < 8)
-    {
-        //  O X
-        // O   O
-        //   N
-        // O   O
-        //  O O
-        new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x - 1 >= 0 && pos_y + 2 < 8)
-    {
-        //  O O
-        // O   X
-        //   N
-        // O   O
-        //  O O
-        new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x + 1 < 8 && pos_y + 2 < 8)
-    {
-        //  O O
-        // O   O
-        //   N
-        // O   X
-        //  O O
-        new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x + 2 < 8 && pos_y + 1 < 8)
-    {
-        //  O O
-        // O   O
-        //   N
-        // O   O
-        //  O X
-        new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x + 2 < 8 && pos_y - 1 >= 0)
-    {
-        //  O O
-        // O   O
-        //   N
-        // O   O
-        //  X O
-        new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x + 1 < 8 && pos_y - 2 >= 0)
-    {
-        //  O O
-        // O   O
-        //   N
-        // X   O
-        //  O O
-        new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x - 1 >= 0 && pos_y - 2 >= 0)
-    {
-        //  O O
-        // X   O
-        //   N
-        // O   O
-        //  O O
-        new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
+        // clang-format off
+&&top_left,     &&top,              &&top,      &&top,      &&top,      &&top,      &&top,              &&top_right,
+&&left,         &&al_top_left,      &&al_top,   &&al_top,   &&al_top,   &&al_top,   &&al_top_right,     &&right,
+&&left,         &&al_left,          &&all,      &&all,      &&all,      &&all,      &&al_right,         &&right,
+&&left,         &&al_left,          &&all,      &&all,      &&all,      &&all,      &&al_right,         &&right,
+&&left,         &&al_left,          &&all,      &&all,      &&all,      &&all,      &&al_right,         &&right,
+&&left,         &&al_left,          &&all,      &&all,      &&all,      &&all,      &&al_right,         &&right,
+&&left,         &&al_bottom_left,   &&al_bottom,&&al_bottom,&&al_bottom,&&al_bottom,&&al_bottom_right,  &&right,
+&&bottom_left,  &&bottom,           &&bottom,   &&bottom,   &&bottom,   &&bottom,   &&bottom,           &&bottom_right,
+        // clang-format on
+    };
+
+    goto *tab[pos];
+
+top_left:
+
+    //  O O
+    // O   O
+    //   N
+    // O   X
+    //  O X
+    new_pos = pos + 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+top:
+    //  O O
+    // O   O
+    //   N
+    // X   X
+    //  X X
+    new_pos = pos + 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+
+top_right:
+    //  O O
+    // O   O
+    //   N
+    // X   O
+    //  X O
+    new_pos = pos + 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+
+left:
+    //  O X
+    // O   X
+    //   N
+    // O   X
+    //  O X
+    new_pos = pos - 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+
+right:
+    //  X O
+    // X   O
+    //   N
+    // X   O
+    //  X O
+
+    new_pos = pos - 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos - 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos + 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos + 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+bottom_left:
+    //  O X
+    // O   X
+    //   N
+    // O   O
+    //  O O
+    new_pos = pos - 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+bottom:
+    //  X X
+    // X   X
+    //   N
+    // O   O
+    //  O O
+    new_pos = pos - 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+
+bottom_right:
+    //  X O
+    // X   O
+    //   N
+    // O   O
+    //  O O
+    new_pos = pos - 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos - 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    return;
+
+al_top_left:
+
+    //  O O
+    // O   X
+    //   N
+    // O   X
+    //  X X
+    new_pos = pos - 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+al_top:
+    //  O O
+    // X   X
+    //   N
+    // X   X
+    //  X X
+    new_pos = pos - 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+al_top_right:
+    //  O O
+    // X   O
+    //   N
+    // X   O
+    //  X X
+    new_pos = pos - 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+al_right:
+    //  X X
+    // X   O
+    //   N
+    // X   O
+    //  X X
+
+    new_pos = pos - 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+
+al_left:
+    //  X X
+    // O   X
+    //   N
+    // O   X
+    //  X X
+    new_pos = pos - 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    return;
+al_bottom_left:
+    //  X X
+    // O   X
+    //   N
+    // O   X
+    //  O O
+    new_pos = pos - 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+al_bottom:
+    //  X X
+    // X   X
+    //   N
+    // X   X
+    //  O O
+    new_pos = pos - 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+al_bottom_right:
+    //  X X
+    // X   O
+    //   N
+    // X   O
+    //  O O
+    new_pos = pos - 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos - 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    new_pos = pos + 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    return;
+all:
+    //  X X
+    // X   X
+    //   N
+    // X   X
+    //  X X
+
+    new_pos = pos - 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos - 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos - 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos + 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos + 17;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos + 15;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos + 6;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+
+    new_pos = pos - 10;
+    if (get_color(data[new_pos]) != knight_color)
+        moves.add_move(new_pos);
+    return;
+
+    // if (pos_x - 2 >= 0 && pos_y - 1 >= 0)
+    // {
+    //     //  X O
+    //     // O   O
+    //     //   N
+    //     // O   O
+    //     //  O O
+    //     new_pos = pos - 17;
+    //     if (get_color(data[new_pos]) != knight_color)
+    //         moves.add_move(new_pos);
+    // }
+    // if (pos_x - 2 >= 0 && pos_y + 1 < 8)
+    // {
+    //     //  O X
+    //     // O   O
+    //     //   N
+    //     // O   O
+    //     //  O O
+    //     new_pos = pos - 15;
+    //     if (get_color(data[new_pos]) != knight_color)
+    //         moves.add_move(new_pos);
+    // }
+    // if (pos_x - 1 >= 0 && pos_y + 2 < 8)
+    // {
+    //     //  O O
+    //     // O   X
+    //     //   N
+    //     // O   O
+    //     //  O O
+    //     new_pos = pos - 6;
+    //     if (get_color(data[new_pos]) != knight_color)
+    //         moves.add_move(new_pos);
+    // }
+    // if (pos_x + 1 < 8 && pos_y + 2 < 8)
+    // {
+    //     //  O O
+    //     // O   O
+    //     //   N
+    //     // O   X
+    //     //  O O
+    //     new_pos = pos + 10;
+    //     if (get_color(data[new_pos]) != knight_color)
+    //         moves.add_move(new_pos);
+    // }
+    // if (pos_x + 2 < 8 && pos_y + 1 < 8)
+    // {
+    //     //  O O
+    //     // O   O
+    //     //   N
+    //     // O   O
+    //     //  O X
+    //     new_pos = pos + 17;
+    //     if (get_color(data[new_pos]) != knight_color)
+    //         moves.add_move(new_pos);
+    // }
+    // if (pos_x + 2 < 8 && pos_y - 1 >= 0)
+    // {
+    //     //  O O
+    //     // O   O
+    //     //   N
+    //     // O   O
+    //     //  X O
+    //     new_pos = pos + 15;
+    //     if (get_color(data[new_pos]) != knight_color)
+    //         moves.add_move(new_pos);
+    // }
+    // if (pos_x + 1 < 8 && pos_y - 2 >= 0)
+    // {
+    //     //  O O
+    //     // O   O
+    //     //   N
+    //     // X   O
+    //     //  O O
+    //     new_pos = pos + 6;
+    //     if (get_color(data[new_pos]) != knight_color)
+    //         moves.add_move(new_pos);
+    // }
+    // if (pos_x - 1 >= 0 && pos_y - 2 >= 0)
+    // {
+    //     //  O O
+    //     // X   O
+    //     //   N
+    //     // O   O
+    //     //  O O
+    //     new_pos = pos - 10;
+    //     if (get_color(data[new_pos]) != knight_color)
+    //         moves.add_move(new_pos);
+    // }
 }
 
 /// @brief generates legal moveset for a pawn at position 'pos'

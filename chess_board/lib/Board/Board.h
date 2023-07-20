@@ -138,7 +138,7 @@ public:
     /// @param moveset stores all legal possible move positions
     /// @param number_of_moves noumber of moves already present in moveset array
     /// @return Number of legal moves
-    void generate_legal_moveset_knight(const int8_t pos, MoveSet &moveset) const;
+    __attribute__((always_inline)) void generate_legal_moveset_knight(const int8_t pos, MoveSet &moveset) const;
 
     /// @brief generates legal moveset for a pawn at position 'pos'
     /// @param pos defines for witch pawn moveset should be calculated
