@@ -2,6 +2,12 @@
 #include <Board.h>
 #include "unity.h"
 
+void exec_time_description(float expected, float got, char *buffer)
+{
+    String description_str = String("execution time [microseconds]:") + String(got) + String("expected:") + String(expected);
+    description_str.toCharArray(buffer, 70);
+}
+
 #define PERFORMANCE_TEST(function, expected, pawn)                   \
     do                                                               \
     {                                                                \
@@ -27,12 +33,9 @@
             avg += micros() - timer;                                 \
         }                                                            \
         float f_avg = avg / no_test_cases;                           \
-        String timer_str(f_avg);                                     \
-        String description_str("execution time [microseconds]:");    \
-        timer_str = description_str + timer_str;                     \
-        char timer_c_str[31 + 12];                                   \
-        timer_str.toCharArray(timer_c_str, 12 + 31);                 \
-        UNITY_TEST_ASSERT(f_avg <= expected, __LINE__, timer_c_str); \
+        char timer_c_str[70];                                        \
+        exec_time_description(expected, f_avg, timer_c_str);         \
+        UNITY_TEST_ASSERT(f_avg == expected, __LINE__, timer_c_str); \
     } while (0)
 
 int performance_test_generate_no_legal_moves_w_pawn(void)
@@ -55,7 +58,7 @@ int performance_test_generate_no_legal_moves_w_knight(void)
 }
 int performance_test_generate_no_legal_moves_b_knight(void)
 {
-    PERFORMANCE_TEST(generate_no_legal_moves_knight, 19.00, b_knight);
+    PERFORMANCE_TEST(generate_no_legal_moves_knight, 18.00, b_knight);
     return 0;
 }
 
@@ -68,7 +71,7 @@ int performance_test_generate_no_legal_moves_w_bishop(void)
 }
 int performance_test_generate_no_legal_moves_b_bishop(void)
 {
-    PERFORMANCE_TEST(generate_no_legal_moves_bishop, 20.00, b_bishop);
+    PERFORMANCE_TEST(generate_no_legal_moves_bishop, 19.00, b_bishop);
 
     return 0;
 }

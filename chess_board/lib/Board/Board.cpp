@@ -613,7 +613,7 @@ int8_t Board::construct_coord(int8_t x, int8_t y)
 /// @param moveset stores all legal possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-int8_t Board::generate_legal_moveset_pawn(int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+void Board::generate_legal_moveset_pawn(int8_t pos, MoveSet &moves) const
 {
 
     Color pawn_color = get_color(data[pos]);
@@ -627,22 +627,22 @@ int8_t Board::generate_legal_moveset_pawn(int8_t pos, int8_t *moveset, int8_t nu
 
         if (pos_x == 1)
             if (data[pos + 16] == empty && data[pos + 8] == empty)
-                moveset[number_of_moves++] = pos + 16;
+                moves.add_move(pos + 16);
 
         if (pos_x + 1 < 8)
         {
             if (data[pos + 8] == empty)
-                moveset[number_of_moves++] = pos + 8;
+                moves.add_move(pos + 8);
 
             if (pos_y - 1 >= 0)
                 // if pawn is not on the left edge of the chessboard
                 if (is_white(data[pos + 7]))
-                    moveset[number_of_moves++] = pos + 7;
+                    moves.add_move(pos + 7);
 
             if (pos_y + 1 < 8)
                 // if pawn is not on the right edge of the chessboard
                 if (is_white(data[pos + 9]))
-                    moveset[number_of_moves++] = pos + 9;
+                    moves.add_move(pos + 9);
         }
     }
     else
@@ -650,26 +650,24 @@ int8_t Board::generate_legal_moveset_pawn(int8_t pos, int8_t *moveset, int8_t nu
         // white is on the bottom, and goes up
         if (pos_x == 6)
             if (data[pos - 16] == empty && data[pos - 8] == empty)
-                moveset[number_of_moves++] = pos - 16;
+                moves.add_move(pos - 16);
 
         if (pos_x - 1 >= 0)
         {
             if (data[pos - 8] == empty)
-                moveset[number_of_moves++] = pos - 8;
+                moves.add_move(pos - 8);
 
             if (pos_y - 1 >= 0)
                 // if pawn is not on the left edge of the chessboard
                 if (is_black(data[pos - 9]))
-                    moveset[number_of_moves++] = pos - 9;
+                    moves.add_move(pos - 9);
 
             if (pos_y + 1 < 8)
                 // if pawn is not on the right edge of the chessboard
                 if (is_black(data[pos - 7]))
-                    moveset[number_of_moves++] = pos - 7;
+                    moves.add_move(pos - 7);
         }
     }
-
-    return number_of_moves;
 }
 
 /// @brief generates legal moveset for a pawn at position 'pos'
@@ -677,7 +675,7 @@ int8_t Board::generate_legal_moveset_pawn(int8_t pos, int8_t *moveset, int8_t nu
 /// @param moveset stores all legal possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
 {
 
     // MeasTime timer("generate_legal_moveset_knight");
@@ -687,6 +685,7 @@ int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t 
     int8_t pos_y = pos % width;
 
     int8_t new_pos;
+
     if (pos_x - 2 >= 0 && pos_y - 1 >= 0)
     {
         //  X O
@@ -696,9 +695,8 @@ int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t 
         //  O O
         new_pos = pos - 17;
         if (get_color(data[new_pos]) != knight_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
-
     if (pos_x - 2 >= 0 && pos_y + 1 < 8)
     {
         //  O X
@@ -708,7 +706,7 @@ int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t 
         //  O O
         new_pos = pos - 15;
         if (get_color(data[new_pos]) != knight_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x - 1 >= 0 && pos_y + 2 < 8)
     {
@@ -719,7 +717,7 @@ int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t 
         //  O O
         new_pos = pos - 6;
         if (get_color(data[new_pos]) != knight_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x + 1 < 8 && pos_y + 2 < 8)
     {
@@ -730,7 +728,7 @@ int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t 
         //  O O
         new_pos = pos + 10;
         if (get_color(data[new_pos]) != knight_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x + 2 < 8 && pos_y + 1 < 8)
     {
@@ -741,7 +739,7 @@ int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t 
         //  O X
         new_pos = pos + 17;
         if (get_color(data[new_pos]) != knight_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x + 2 < 8 && pos_y - 1 >= 0)
     {
@@ -752,7 +750,7 @@ int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t 
         //  X O
         new_pos = pos + 15;
         if (get_color(data[new_pos]) != knight_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x + 1 < 8 && pos_y - 2 >= 0)
     {
@@ -763,7 +761,7 @@ int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t 
         //  O O
         new_pos = pos + 6;
         if (get_color(data[new_pos]) != knight_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x - 1 >= 0 && pos_y - 2 >= 0)
     {
@@ -774,10 +772,8 @@ int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t 
         //  O O
         new_pos = pos - 10;
         if (get_color(data[new_pos]) != knight_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
-
-    return number_of_moves;
 }
 
 /// @brief generates legal moveset for a pawn at position 'pos'
@@ -785,7 +781,7 @@ int8_t Board::generate_legal_moveset_knight(int8_t pos, int8_t *moveset, int8_t 
 /// @param moveset stores all legal possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-int8_t Board::generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
 {
 
     Color king_color = get_color(data[pos]);
@@ -802,7 +798,7 @@ int8_t Board::generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int
 
         new_pos = pos - 9;
         if (get_color(data[new_pos]) != king_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x - 1 >= 0)
     {
@@ -812,7 +808,7 @@ int8_t Board::generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int
 
         new_pos = pos - 8;
         if (get_color(data[new_pos]) != king_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x - 1 >= 0 && pos_y + 1 < 8)
     {
@@ -822,7 +818,7 @@ int8_t Board::generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int
 
         new_pos = pos - 7;
         if (get_color(data[new_pos]) != king_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_y - 1 >= 0)
     {
@@ -832,7 +828,7 @@ int8_t Board::generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int
 
         new_pos = pos - 1;
         if (get_color(data[new_pos]) != king_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_y + 1 < 8)
     {
@@ -842,7 +838,7 @@ int8_t Board::generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int
 
         new_pos = pos + 1;
         if (get_color(data[new_pos]) != king_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x + 1 < 8 && pos_y - 1 >= 0)
     {
@@ -852,7 +848,7 @@ int8_t Board::generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int
 
         new_pos = pos + 7;
         if (get_color(data[new_pos]) != king_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x + 1 < 8)
     {
@@ -862,7 +858,7 @@ int8_t Board::generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int
 
         new_pos = pos + 8;
         if (get_color(data[new_pos]) != king_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
     if (pos_x + 1 < 8 && pos_y + 1 < 8)
     {
@@ -872,10 +868,8 @@ int8_t Board::generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int
 
         new_pos = pos + 9;
         if (get_color(data[new_pos]) != king_color)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
     }
-
-    return number_of_moves;
 }
 
 /// @brief generates legal moveset for a pawn at position 'pos'
@@ -883,14 +877,13 @@ int8_t Board::generate_legal_moveset_king(const int8_t pos, int8_t *moveset, int
 /// @param moveset stores all legal possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint8_t Board::generate_legal_moveset_rook(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+void Board::generate_legal_moveset_rook(const int8_t pos, MoveSet &moves) const
 {
 
     Color rook_color = get_color(data[pos]);
 
     int8_t pos_x = pos / width;
     int8_t pos_y = pos % width;
-    delayMicroseconds(83);
 
     int8_t new_pos;
 
@@ -899,10 +892,10 @@ uint8_t Board::generate_legal_moveset_rook(const int8_t pos, int8_t *moveset, in
         // going down starting with position just under the rook
         new_pos = construct_coord(x, pos_y);
         if (data[new_pos] == empty)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
         else if (get_color(data[new_pos]) != rook_color)
         {
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
             break;
         }
         else
@@ -913,10 +906,10 @@ uint8_t Board::generate_legal_moveset_rook(const int8_t pos, int8_t *moveset, in
         // going up starting with position just above the rook
         new_pos = construct_coord(x, pos_y);
         if (data[new_pos] == empty)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
         else if (get_color(data[new_pos]) != rook_color)
         {
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
             break;
         }
         else
@@ -927,10 +920,10 @@ uint8_t Board::generate_legal_moveset_rook(const int8_t pos, int8_t *moveset, in
         // going right starting with position just to the right from the rook
         new_pos = construct_coord(pos_x, y);
         if (data[new_pos] == empty)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
         else if (get_color(data[new_pos]) != rook_color)
         {
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
             break;
         }
         else
@@ -941,17 +934,15 @@ uint8_t Board::generate_legal_moveset_rook(const int8_t pos, int8_t *moveset, in
         // going left starting with position just to the left from the rook
         new_pos = construct_coord(pos_x, y);
         if (data[new_pos] == empty)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
         else if (get_color(data[new_pos]) != rook_color)
         {
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
             break;
         }
         else
             break;
     }
-
-    return number_of_moves;
 }
 
 /// @brief generates legal moveset for a pawn at position 'pos'
@@ -959,7 +950,7 @@ uint8_t Board::generate_legal_moveset_rook(const int8_t pos, int8_t *moveset, in
 /// @param moveset stores all legal possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint8_t Board::generate_legal_moveset_bishop(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+void Board::generate_legal_moveset_bishop(const int8_t pos, MoveSet &moves) const
 {
 
     Color bishop_color = get_color(data[pos]);
@@ -973,10 +964,10 @@ uint8_t Board::generate_legal_moveset_bishop(const int8_t pos, int8_t *moveset, 
         // going down and right starting with position just to the right and down from the bishop
         new_pos = construct_coord(x, y);
         if (data[new_pos] == empty)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
         else if (get_color(data[new_pos]) != bishop_color)
         {
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
             break;
         }
         else
@@ -987,10 +978,10 @@ uint8_t Board::generate_legal_moveset_bishop(const int8_t pos, int8_t *moveset, 
         // going down and left starting with position just to the left and down from the bishop
         new_pos = construct_coord(x, y);
         if (data[new_pos] == empty)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
         else if (get_color(data[new_pos]) != bishop_color)
         {
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
             break;
         }
         else
@@ -1001,10 +992,10 @@ uint8_t Board::generate_legal_moveset_bishop(const int8_t pos, int8_t *moveset, 
         // going up and left starting with position just to the left and up from the bishop
         new_pos = construct_coord(x, y);
         if (data[new_pos] == empty)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
         else if (get_color(data[new_pos]) != bishop_color)
         {
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
             break;
         }
         else
@@ -1015,17 +1006,15 @@ uint8_t Board::generate_legal_moveset_bishop(const int8_t pos, int8_t *moveset, 
         // going up and right starting with position just to the right and up from the bishop
         new_pos = construct_coord(x, y);
         if (data[new_pos] == empty)
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
         else if (get_color(data[new_pos]) != bishop_color)
         {
-            moveset[number_of_moves++] = new_pos;
+            moves.add_move(new_pos);
             break;
         }
         else
             break;
     }
-
-    return number_of_moves;
 }
 
 /// @brief generates legal moveset for a pawn at position 'pos'
@@ -1033,21 +1022,19 @@ uint8_t Board::generate_legal_moveset_bishop(const int8_t pos, int8_t *moveset, 
 /// @param moveset stores all legal possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint8_t Board::generate_legal_moveset_queen(const int8_t pos, int8_t *moveset, int8_t number_of_moves = 0) const
+void Board::generate_legal_moveset_queen(const int8_t pos, MoveSet &moves) const
 {
 
     //  queen is basically rook & bishop at once, so why even bother?
-    number_of_moves = generate_legal_moveset_rook(pos, moveset, number_of_moves);
-    number_of_moves = generate_legal_moveset_bishop(pos, moveset, number_of_moves);
-
-    return number_of_moves;
+    generate_legal_moveset_rook(pos, moves);
+    generate_legal_moveset_bishop(pos, moves);
 }
 
 /// @brief generates legal moveset for a given color
 /// @param color color for which all moves possible will be generated
 /// @param moveset stores all legal possible move positions
 /// @return Number of legal moves
-uint8_t Board::generate_legal_moveset_for_color(Color color, int8_t *starting_positions, int8_t *moveset) const
+void Board::generate_legal_moveset_for_color(Color color, MoveSet &moves) const
 {
 
     int8_t queens_position[1];
@@ -1075,58 +1062,47 @@ uint8_t Board::generate_legal_moveset_for_color(Color color, int8_t *starting_po
                 index -= 6;
 
             table[index][index_table[index]] = i;
-            ++index_table[index];
+            index_table[index] += 1;
         }
     }
 
-    int number_of_moves = 0;
-    int new_no_moves;
-
+    int number_of_moves;
     for (int8_t p = 0; p < index_table[w_pawn - 1]; p++)
     {
-        new_no_moves = generate_legal_moveset_pawn(pawns_positions[p], moveset, number_of_moves);
-
-        for (int8_t j = number_of_moves; j < new_no_moves; j++)
-            starting_positions[j] = pawns_positions[p];
-        number_of_moves = new_no_moves;
+        number_of_moves = moves.size;
+        generate_legal_moveset_pawn(pawns_positions[p], moves);
+        moves.add_starting_position(moves.size - number_of_moves, pawns_positions[p]);
     }
     for (int8_t k = 0; k < index_table[w_knight - 1]; k++)
     {
-        new_no_moves = generate_legal_moveset_knight(knights_positions[k], moveset, number_of_moves);
-        for (int8_t j = number_of_moves; j < new_no_moves; j++)
-            starting_positions[j] = knights_positions[k];
-        number_of_moves = new_no_moves;
+        number_of_moves = moves.size;
+        generate_legal_moveset_knight(knights_positions[k], moves);
+        moves.add_starting_position(moves.size - number_of_moves, knights_positions[k]);
     }
     if (index_table[w_queen - 1] > 0)
     {
-        new_no_moves = generate_legal_moveset_queen(queens_position[0], moveset, number_of_moves);
-        for (int8_t j = number_of_moves; j < new_no_moves; j++)
-            starting_positions[j] = queens_position[0];
-        number_of_moves = new_no_moves;
+        number_of_moves = moves.size;
+        generate_legal_moveset_queen(queens_position[0], moves);
+        moves.add_starting_position(moves.size - number_of_moves, queens_position[0]);
     }
     for (int8_t b = 0; b < index_table[w_bishop - 1]; b++)
     {
-        new_no_moves = generate_legal_moveset_bishop(bishops_positions[b], moveset, number_of_moves);
-        for (int8_t j = number_of_moves; j < new_no_moves; j++)
-            starting_positions[j] = bishops_positions[b];
-        number_of_moves = new_no_moves;
+        number_of_moves = moves.size;
+        generate_legal_moveset_bishop(bishops_positions[b], moves);
+        moves.add_starting_position(moves.size - number_of_moves, bishops_positions[b]);
     }
     for (int8_t r = 0; r < index_table[w_rook - 1]; r++)
     {
-        new_no_moves = generate_legal_moveset_rook(rooks_positions[r], moveset, number_of_moves);
-        for (int8_t j = number_of_moves; j < new_no_moves; j++)
-            starting_positions[j] = rooks_positions[r];
-        number_of_moves = new_no_moves;
+        number_of_moves = moves.size;
+        generate_legal_moveset_rook(rooks_positions[r], moves);
+        moves.add_starting_position(moves.size - number_of_moves, rooks_positions[r]);
     }
     if (index_table[w_king - 1] > 0)
     {
-        new_no_moves = generate_legal_moveset_king(kings_position[0], moveset, number_of_moves);
-        for (int8_t j = number_of_moves; j < new_no_moves; j++)
-            starting_positions[j] = kings_position[0];
-        number_of_moves = new_no_moves;
+        number_of_moves = moves.size;
+        generate_legal_moveset_king(kings_position[0], moves);
+        moves.add_starting_position(moves.size - number_of_moves, kings_position[0]);
     }
-
-    return number_of_moves;
 }
 
 int16_t Board::estimate_position() const
@@ -1171,26 +1147,32 @@ int16_t Board::estimate_position() const
 
     return estimation;
 }
-void Board::estimate_all_moves_for_color(const int8_t depth, Color color, const uint8_t no_moves, int8_t *starting_positions, int8_t *moveset, int16_t *estimations)
+void Board::estimate_all_moves_for_color(const int8_t depth, Color color, MoveSet &moves, int16_t *estimations)
 {
-
     if (color == white)
         color = black;
     else
         color = white;
 
-    for (uint8_t i = 0; i < no_moves; i++)
+    int8_t starting_position;
+    Piece from;
+
+    int8_t target_position;
+    Piece to;
+
+    for (uint8_t i = 0; i < moves.size; i++)
     {
+        moves.next(starting_position, target_position);
 
-        auto from = data[starting_positions[i]];
-        auto to = data[moveset[i]];
+        from = data[starting_position];
+        to = data[target_position];
 
-        move(starting_positions[i], moveset[i]);
+        move(starting_position, target_position);
 
         estimations[i] = alpha_beta(depth, -20000, 20000, color);
 
-        data[starting_positions[i]] = from;
-        data[moveset[i]] = to;
+        data[starting_position] = from;
+        data[target_position] = to;
     }
 }
 
@@ -1209,27 +1191,35 @@ int16_t Board::alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const
     if (!check_for_black_king())
         return weight_encoding[w_king];
 
-    int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
-    int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-    uint8_t no_moves = generate_legal_moveset_for_color(player_color, starting_positions, moves);
+    MoveSet moves;
 
+    generate_legal_moveset_for_color(player_color, moves);
+
+    int8_t starting_position;
     Piece from;
+
+    int8_t target_position;
     Piece to;
+
     if (player_color == white)
     {
-        if (no_moves == 0)
+        if (moves.size == 0)
             return weight_encoding[b_king];
-        int16_t result = weight_encoding[b_king];
-        for (int8_t i = 0; i < no_moves; i++)
-        {
-            from = data[starting_positions[i]];
-            to = data[moves[i]];
 
-            move(starting_positions[i], moves[i]);
+        int16_t result = weight_encoding[b_king];
+
+        for (int8_t i = 0; i < moves.size; i++)
+        {
+            moves.next(starting_position, target_position);
+
+            from = data[starting_position];
+            to = data[target_position];
+
+            move(starting_position, target_position);
             result = max(result, alpha_beta(depth - 1, alpha, beta, black));
 
-            data[starting_positions[i]] = from;
-            data[moves[i]] = to;
+            data[starting_position] = from;
+            data[target_position] = to;
 
             if (result >= beta)
                 break;
@@ -1239,20 +1229,24 @@ int16_t Board::alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const
     }
     else
     {
-        if (no_moves == 0)
+        if (moves.size == 0)
             return weight_encoding[w_king];
+
         int16_t result = weight_encoding[w_king];
-        for (int8_t i = 0; i < no_moves; i++)
+
+        for (int8_t i = 0; i < moves.size; i++)
         {
 
-            from = data[starting_positions[i]];
-            to = data[moves[i]];
+            moves.next(starting_position, target_position);
 
-            move(starting_positions[i], moves[i]);
+            from = data[starting_position];
+            to = data[target_position];
+
+            move(starting_position, target_position);
             result = min(result, alpha_beta(depth - 1, alpha, beta, white));
 
-            data[starting_positions[i]] = from;
-            data[moves[i]] = to;
+            data[starting_position] = from;
+            data[target_position] = to;
 
             if (result <= alpha)
                 break;
@@ -1262,67 +1256,67 @@ int16_t Board::alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const
     }
 }
 
-int16_t Board::pvs(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color)
-{
-    int16_t current_estimation = estimate_position();
-    if (depth <= 0 || current_estimation < -15000 || current_estimation > 15000)
-        return current_estimation;
+// int16_t Board::pvs(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color)
+// {
+//     int16_t current_estimation = estimate_position();
+//     if (depth <= 0 || current_estimation < -15000 || current_estimation > 15000)
+//         return current_estimation;
 
-    int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
-    int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-    uint8_t no_moves = generate_legal_moveset_for_color(player_color, starting_positions, moves);
-    int16_t result;
-    Piece from;
-    Piece to;
+//     int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
+//     int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
+//     uint8_t no_moves = generate_legal_moveset_for_color(player_color, starting_positions, moves);
+//     int16_t result;
+//     Piece from;
+//     Piece to;
 
-    Color color;
-    if (player_color == white)
-        color = black;
-    else
-        color = white;
+//     Color color;
+//     if (player_color == white)
+//         color = black;
+//     else
+//         color = white;
 
-    for (int8_t i = 0; i < no_moves; i++)
-    {
-        if (i == 0)
-        {
-            from = data[starting_positions[i]];
-            to = data[moves[i]];
+//     for (int8_t i = 0; i < no_moves; i++)
+//     {
+//         if (i == 0)
+//         {
+//             from = data[starting_positions[i]];
+//             to = data[moves[i]];
 
-            move(starting_positions[i], moves[i]);
-            result = -pvs(depth - 1, -beta, -alpha, color);
+//             move(starting_positions[i], moves[i]);
+//             result = -pvs(depth - 1, -beta, -alpha, color);
 
-            data[starting_positions[i]] = from;
-            data[moves[i]] = to;
-        }
-        else
-        {
-            from = data[starting_positions[i]];
-            to = data[moves[i]];
+//             data[starting_positions[i]] = from;
+//             data[moves[i]] = to;
+//         }
+//         else
+//         {
+//             from = data[starting_positions[i]];
+//             to = data[moves[i]];
 
-            move(starting_positions[i], moves[i]);
-            result = -pvs(depth - 1, -alpha - 1, -alpha, color);
+//             move(starting_positions[i], moves[i]);
+//             result = -pvs(depth - 1, -alpha - 1, -alpha, color);
 
-            data[starting_positions[i]] = from;
-            data[moves[i]] = to;
+//             data[starting_positions[i]] = from;
+//             data[moves[i]] = to;
 
-            if (alpha < result && result < beta)
-            {
-                from = data[starting_positions[i]];
-                to = data[moves[i]];
+//             if (alpha < result && result < beta)
+//             {
+//                 from = data[starting_positions[i]];
+//                 to = data[moves[i]];
 
-                move(starting_positions[i], moves[i]);
-                result = -pvs(depth - 1, -beta, -result, color);
+//                 move(starting_positions[i], moves[i]);
+//                 result = -pvs(depth - 1, -beta, -result, color);
 
-                data[starting_positions[i]] = from;
-                data[moves[i]] = to;
-            }
-        }
-        alpha = max(alpha, result);
-        if (alpha >= beta)
-            break;
-    }
-    return alpha;
-}
+//                 data[starting_positions[i]] = from;
+//                 data[moves[i]] = to;
+//             }
+//         }
+//         alpha = max(alpha, result);
+//         if (alpha >= beta)
+//             break;
+//     }
+//     return alpha;
+// }
 
 bool Board::check_for_white_king()
 {

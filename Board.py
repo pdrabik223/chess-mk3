@@ -114,7 +114,7 @@ class Board:
                 if id in self.moves or id in self.starting_positions:
                     id_of_best_move = self.moves_estimation.index(min(self.moves_estimation))
                     if id == self.moves[id_of_best_move] :
-                        background_color = best_move_color + best_move_color
+                        x = best_move_color + best_move_color
                     if  id == self.starting_positions[id_of_best_move]:
                         background_color = best_move_start_color+best_move_start_color
 

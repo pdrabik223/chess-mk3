@@ -1,16 +1,32 @@
 #include <Arduino.h>
 #include <Board.h>
+#include <MoveSet.h>
 #include "unity.h"
 
+char *to_string(const char *description, int value)
+{
+  String timer_str(value);
+  String description_str(description);
+  timer_str = description_str + timer_str;
+  char timer_c_str[description_str.length() + 12];
+  timer_str.toCharArray(timer_c_str, 12 + description_str.length());
+  return timer_c_str;
+}
 int test_for_correct_no_moves_full_board_starting_pos(void)
 {
 
   Board board(true);
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
-  if (20 != board.generate_legal_moveset_for_color(white, starting_positions, moves))
+  MoveSet moves;
+  board.generate_legal_moveset_for_color(white, moves);
+  auto no_moves_white = moves.size;
+  if (no_moves_white != 20)
     return 1;
-  if (board.generate_legal_moveset_for_color(black, starting_positions, moves) != board.generate_legal_moveset_for_color(white, starting_positions, moves))
+
+  moves.clear();
+  board.generate_legal_moveset_for_color(white, moves);
+  auto no_moves_black = moves.size;
+
+  if (no_moves_white != no_moves_black)
     return 1;
   return 0;
 }
@@ -19,9 +35,10 @@ int test_for_correct_no_moves_empty_board(void)
 {
 
   Board board;
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
-  if (0 == board.generate_legal_moveset_for_color(white, starting_positions, moves))
+  MoveSet moves;
+  board.generate_legal_moveset_for_color(white, moves);
+  auto no_moves_white = moves.size;
+  if (no_moves_white == 0)
     return 0;
   return 1;
 }
@@ -31,24 +48,38 @@ int test_for_correct_no_moves_pawn_starting_position(void)
 
   Board board;
   board.set_piece(6, 4, w_pawn);
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  int8_t starting_positions[MAX_NO_MOVES_IN_EACH_BOARD];
-  if (2 != board.generate_legal_moveset_for_color(white, starting_positions, moves))
+  MoveSet moves;
+  board.generate_legal_moveset_for_color(white, moves);
+
+  auto no_moves_white = moves.size;
+
+  if (2 != no_moves_white)
     return 1;
 
+  moves.clear();
   board = Board();
   board.set_piece(5, 4, w_pawn);
-  if (1 != board.generate_legal_moveset_for_color(white, starting_positions, moves))
-    return 1;
+  board.generate_legal_moveset_for_color(white, moves);
 
+  no_moves_white = moves.size;
+  if (1 != no_moves_white)
+    return 1;
+  moves.clear();
   board = Board();
   board.set_piece(1, 4, b_pawn);
-  if (2 != board.generate_legal_moveset_for_color(black, starting_positions, moves))
+  board.generate_legal_moveset_for_color(white, moves);
+
+  no_moves_white = moves.size;
+  if (2 != no_moves_white)
     return 1;
 
+  moves.clear();
   board = Board();
   board.set_piece(2, 4, b_pawn);
-  if (1 != board.generate_legal_moveset_for_color(black, starting_positions, moves))
+  board.generate_legal_moveset_for_color(white, moves);
+
+  no_moves_white = moves.size;
+  if (1 != no_moves_white)
     return 1;
 
   return 0;
@@ -86,317 +117,76 @@ int test_if_starting_position_is_equal(void)
     return 0;
   return 1;
 }
-
-int performance_test_generate_legal_moveset_w_pawn(void)
+int test_correct_move_set_next(void)
 {
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  uint16_t no_test_cases = 100;
-  unsigned long avg = 0;
-  for (uint16_t i = 0; i < no_test_cases; i++)
+
+  int8_t starting_pos[5]{3, 3, 9, 9, 9};
+  int8_t move[5]{2, 4, 8, 16, 32};
+  MoveSet moves;
+  for (int i = 0; i < 5; i++)
   {
-    Board board;
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = b_pawn;
-
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = w_pawn;
-
-    int pawn_pos = random(0, 64);
-    board.data[pawn_pos] = w_pawn;
-
-    auto timer = micros();
-    board.generate_legal_moveset_pawn(pawn_pos, moves);
-    avg += micros() - timer;
+    moves.add_move(move[i]);
   }
-  float f_avg = avg / no_test_cases;
-  String timer_str(f_avg);
-  String description_str("execution time [microseconds]:");
-  timer_str = description_str + timer_str;
-  char timer_c_str[31 + 12];
-  timer_str.toCharArray(timer_c_str, 12 + 31);
-  UNITY_TEST_ASSERT(f_avg <= 25.00, __LINE__, timer_c_str);
-  return 0;
+  moves.add_starting_position(2, 3);
+  moves.add_starting_position(3, 9);
+
+  int8_t from, to;
+
+  for (int i = 0; i < 5; i++)
+
+  {
+    moves.next(from, to);
+    {
+      String timer_str = String("iter:") + String(i) + String("exp:") + String(starting_pos[i]) + String("got:") + String(from);
+      char timer_c_str[30];
+      timer_str.toCharArray(timer_c_str, 30);
+
+      UNITY_TEST_ASSERT(from == starting_pos[i], __LINE__, timer_c_str);
+    }
+    {
+      String timer_str = String("iter:") + String(i) + String("exp:") + String(move[i]) + String("got:") + String(to);
+      char timer_c_str[30];
+      timer_str.toCharArray(timer_c_str, 30);
+
+      UNITY_TEST_ASSERT(to == move[i], __LINE__, timer_c_str);
+    }
+  }
 }
-int performance_test_generate_legal_moveset_b_pawn(void)
+int test_correct_move_set_get(void)
 {
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  uint16_t no_test_cases = 100;
 
-  unsigned long avg = 0;
-  for (uint16_t i = 0; i < no_test_cases; i++)
+  int8_t starting_pos[5]{3, 3, 9, 9, 9};
+  int8_t move[5]{2, 4, 8, 16, 32};
+  MoveSet moves;
+  for (int i = 0; i < 5; i++)
   {
-    Board board;
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = w_pawn;
-
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = b_pawn;
-
-    int pawn_pos = random(0, 64);
-    board.data[pawn_pos] = b_pawn;
-
-    auto timer = micros();
-    board.generate_legal_moveset_pawn(pawn_pos, moves);
-    avg += micros() - timer;
+    moves.add_move(move[i]);
   }
-  float f_avg = avg / no_test_cases;
-  String timer_str(f_avg);
-  String description_str("execution time [microseconds]:");
-  timer_str = description_str + timer_str;
-  char timer_c_str[31 + 12];
-  timer_str.toCharArray(timer_c_str, 12 + 31);
-  UNITY_TEST_ASSERT(f_avg <= 25.00, __LINE__, timer_c_str);
-  return 0;
-}
-int performance_test_generate_legal_moveset_w_knight(void)
-{
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  uint16_t no_test_cases = 100;
-  unsigned long avg = 0;
-  for (uint16_t i = 0; i < no_test_cases; i++)
+  moves.add_starting_position(2, 3);
+  moves.add_starting_position(3, 9);
+
+  int8_t from, to;
+
+  for (int i = 0; i < 5; i++)
+
   {
-    Board board;
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = b_pawn;
+    moves.get(from, to, i);
+    {
+      String timer_str = String("iter:") + String(i) + String("exp:") + String(starting_pos[i]) + String("got:") + String(from);
+      char timer_c_str[30];
+      timer_str.toCharArray(timer_c_str, 30);
 
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = w_pawn;
+      UNITY_TEST_ASSERT(from == starting_pos[i], __LINE__, timer_c_str);
+    }
+    {
+      String timer_str = String("iter:") + String(i) + String("exp:") + String(move[i]) + String("got:") + String(to);
+      char timer_c_str[30];
+      timer_str.toCharArray(timer_c_str, 30);
 
-    int pawn_pos = random(0, 64);
-    board.data[pawn_pos] = w_knight;
-
-    auto timer = micros();
-    board.generate_legal_moveset_knight(pawn_pos, moves);
-    avg += micros() - timer;
+      UNITY_TEST_ASSERT(to == move[i], __LINE__, timer_c_str);
+    }
   }
-  float f_avg = avg / no_test_cases;
-  String timer_str(f_avg);
-  String description_str("execution time [microseconds]:");
-  timer_str = description_str + timer_str;
-  char timer_c_str[31 + 12];
-  timer_str.toCharArray(timer_c_str, 12 + 31);
-  UNITY_TEST_ASSERT(f_avg <= 36.00, __LINE__, timer_c_str);
-  return 0;
 }
-int performance_test_generate_legal_moveset_b_knight(void)
-{
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  uint16_t no_test_cases = 100;
-
-  unsigned long avg = 0;
-  for (uint16_t i = 0; i < no_test_cases; i++)
-  {
-    Board board;
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = w_pawn;
-
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = b_pawn;
-
-    int pawn_pos = random(0, 64);
-    board.data[pawn_pos] = b_knight;
-
-    auto timer = micros();
-    board.generate_legal_moveset_knight(pawn_pos, moves);
-    avg += micros() - timer;
-  }
-  float f_avg = avg / no_test_cases;
-  String timer_str(f_avg);
-  String description_str("execution time [microseconds]:");
-  timer_str = description_str + timer_str;
-  char timer_c_str[31 + 12];
-  timer_str.toCharArray(timer_c_str, 12 + 31);
-  UNITY_TEST_ASSERT(f_avg <= 36.00, __LINE__, timer_c_str);
-  return 0;
-}
-
-int performance_test_generate_legal_moveset_w_bishop(void)
-{
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  uint16_t no_test_cases = 100;
-  unsigned long avg = 0;
-  for (uint16_t i = 0; i < no_test_cases; i++)
-  {
-    Board board;
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = b_pawn;
-
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = w_pawn;
-
-    int pawn_pos = random(0, 64);
-    board.data[pawn_pos] = w_bishop;
-
-    auto timer = micros();
-    board.generate_legal_moveset_bishop(pawn_pos, moves);
-    avg += micros() - timer;
-  }
-  float f_avg = avg / no_test_cases;
-  String timer_str(f_avg);
-  String description_str("execution time [microseconds]:");
-  timer_str = description_str + timer_str;
-  char timer_c_str[31 + 12];
-  timer_str.toCharArray(timer_c_str, 12 + 31);
-  UNITY_TEST_ASSERT(f_avg <= 39.00, __LINE__, timer_c_str);
-  return 0;
-}
-int performance_test_generate_legal_moveset_b_bishop(void)
-{
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  uint16_t no_test_cases = 100;
-
-  unsigned long avg = 0;
-  for (uint16_t i = 0; i < no_test_cases; i++)
-  {
-    Board board;
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = w_pawn;
-
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = b_pawn;
-
-    int pawn_pos = random(0, 64);
-    board.data[pawn_pos] = b_bishop;
-
-    auto timer = micros();
-    board.generate_legal_moveset_bishop(pawn_pos, moves);
-    avg += micros() - timer;
-  }
-  float f_avg = avg / no_test_cases;
-  String timer_str(f_avg);
-  String description_str("execution time [microseconds]:");
-  timer_str = description_str + timer_str;
-  char timer_c_str[31 + 12];
-  timer_str.toCharArray(timer_c_str, 12 + 31);
-  UNITY_TEST_ASSERT(f_avg <= 39.00, __LINE__, timer_c_str);
-  return 0;
-}
-
-int performance_test_generate_legal_moveset_w_queen(void)
-{
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  uint16_t no_test_cases = 100;
-  unsigned long avg = 0;
-  for (uint16_t i = 0; i < no_test_cases; i++)
-  {
-    Board board;
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = b_pawn;
-
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = w_pawn;
-
-    int pawn_pos = random(0, 64);
-    board.data[pawn_pos] = w_queen;
-
-    auto timer = micros();
-    board.generate_legal_moveset_queen(pawn_pos, moves);
-    avg += micros() - timer;
-  }
-  float f_avg = avg / no_test_cases;
-  String timer_str(f_avg);
-  String description_str("execution time [microseconds]:");
-  timer_str = description_str + timer_str;
-  char timer_c_str[31 + 12];
-  timer_str.toCharArray(timer_c_str, 12 + 31);
-  UNITY_TEST_ASSERT(f_avg <= 75.00, __LINE__, timer_c_str);
-  return 0;
-}
-int performance_test_generate_legal_moveset_b_queen(void)
-{
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  uint16_t no_test_cases = 100;
-
-  unsigned long avg = 0;
-  for (uint16_t i = 0; i < no_test_cases; i++)
-  {
-    Board board;
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = w_pawn;
-
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = b_pawn;
-
-    int pawn_pos = random(0, 64);
-    board.data[pawn_pos] = b_queen;
-
-    auto timer = micros();
-    board.generate_legal_moveset_queen(pawn_pos, moves);
-    avg += micros() - timer;
-  }
-  float f_avg = avg / no_test_cases;
-  String timer_str(f_avg);
-  String description_str("execution time [microseconds]:");
-  timer_str = description_str + timer_str;
-  char timer_c_str[31 + 12];
-  timer_str.toCharArray(timer_c_str, 12 + 31);
-  UNITY_TEST_ASSERT(f_avg <= 75.00, __LINE__, timer_c_str);
-  return 0;
-}
-
-int performance_test_generate_legal_moveset_w_king(void)
-{
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  uint16_t no_test_cases = 100;
-  unsigned long avg = 0;
-  for (uint16_t i = 0; i < no_test_cases; i++)
-  {
-    Board board;
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = b_pawn;
-
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = w_pawn;
-
-    int pawn_pos = random(0, 64);
-    board.data[pawn_pos] = w_king;
-
-    auto timer = micros();
-    board.generate_legal_moveset_king(pawn_pos, moves);
-    avg += micros() - timer;
-  }
-  float f_avg = avg / no_test_cases;
-  String timer_str(f_avg);
-  String description_str("execution time [microseconds]:");
-  timer_str = description_str + timer_str;
-  char timer_c_str[31 + 12];
-  timer_str.toCharArray(timer_c_str, 12 + 31);
-  UNITY_TEST_ASSERT(f_avg <= 37.00, __LINE__, timer_c_str);
-  return 0;
-}
-
-int performance_test_generate_legal_moveset_b_king(void)
-{
-  int8_t moves[MAX_NO_MOVES_IN_EACH_BOARD];
-  uint16_t no_test_cases = 100;
-
-  unsigned long avg = 0;
-  for (uint16_t i = 0; i < no_test_cases; i++)
-  {
-    Board board;
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = w_pawn;
-
-    for (int j = 0; j < 16; j++)
-      board.data[random(0, 64)] = b_pawn;
-
-    int pawn_pos = random(0, 64);
-    board.data[pawn_pos] = b_king;
-
-    auto timer = micros();
-    board.generate_legal_moveset_king(pawn_pos, moves);
-    avg += micros() - timer;
-  }
-  float f_avg = avg / no_test_cases;
-  String timer_str(f_avg);
-  String description_str("execution time [microseconds]:");
-  timer_str = description_str + timer_str;
-  char timer_c_str[31 + 12];
-  timer_str.toCharArray(timer_c_str, 12 + 31);
-  UNITY_TEST_ASSERT(f_avg <= 37.00, __LINE__, timer_c_str);
-  return 0;
-}
-
 int runUnityTests(void)
 {
   UNITY_BEGIN();
@@ -406,21 +196,8 @@ int runUnityTests(void)
   RUN_TEST(test_move_black_pawn_upgrade);
   RUN_TEST(test_move_white_pawn_upgrade);
   RUN_TEST(test_if_starting_position_is_equal);
-
-  // RUN_TEST(performance_test_generate_legal_moveset_w_pawn);
-  // RUN_TEST(performance_test_generate_legal_moveset_b_pawn);
-
-  // RUN_TEST(performance_test_generate_legal_moveset_w_knight);
-  // RUN_TEST(performance_test_generate_legal_moveset_b_knight);
-
-  // RUN_TEST(performance_test_generate_legal_moveset_w_bishop);
-  // RUN_TEST(performance_test_generate_legal_moveset_b_bishop);
-
-  // RUN_TEST(performance_test_generate_legal_moveset_w_queen);
-  // RUN_TEST(performance_test_generate_legal_moveset_b_queen);
-
-  // RUN_TEST(performance_test_generate_legal_moveset_w_king);
-  // RUN_TEST(performance_test_generate_legal_moveset_b_king);
+  RUN_TEST(test_correct_move_set_next);
+  RUN_TEST(test_correct_move_set_get);
 
   return UNITY_END();
 }
