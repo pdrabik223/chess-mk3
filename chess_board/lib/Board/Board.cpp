@@ -712,92 +712,204 @@ uint16_t generate_no_legal_moves_king(const Piece *data, const int8_t pos)
     uint16_t number_of_moves = 0;
     Color king_color = get_color(data[pos]);
 
-    int8_t pos_x = pos / 8;
-    int8_t pos_y = pos % 8;
+    // int8_t pos_x = pos / 8;
+    // int8_t pos_y = pos % 8;
 
     int8_t new_pos;
-    if (pos_x - 1 >= 0 && pos_y - 1 >= 0)
+    switch (pos)
     {
-        // XOO
-        // OKO
-        // OOO
-
-        new_pos = pos - 9;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-    }
-    if (pos_x - 1 >= 0)
-    {
-        // OXO
-        // OKO
-        // OOO
-
-        new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-    }
-    if (pos_x - 1 >= 0 && pos_y + 1 < 8)
-    {
-        // OOX
-        // OKO
-        // OOO
-
-        new_pos = pos - 7;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-    }
-    if (pos_y - 1 >= 0)
-    {
-        // OOO
-        // XKO
-        // OOO
-
-        new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-    }
-    if (pos_y + 1 < 8)
-    {
+    case 0:
         // OOO
         // OKX
-        // OOO
-
+        // OXX
         new_pos = pos + 1;
         if (get_color(data[new_pos]) != king_color)
             number_of_moves++;
-    }
-    if (pos_x + 1 < 8 && pos_y - 1 >= 0)
-    {
+        new_pos = pos + 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 9;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        return number_of_moves;
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
         // OOO
-        // OKO
-        // XOO
+        // XKX
+        // XXX
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 7;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 9;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        return number_of_moves;
+    case 7:
+        // OOO
+        // XKO
+        // XXO
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
 
         new_pos = pos + 7;
         if (get_color(data[new_pos]) != king_color)
             number_of_moves++;
-    }
-    if (pos_x + 1 < 8)
-    {
-        // OOO
-        // OKO
-        // OXO
-
         new_pos = pos + 8;
         if (get_color(data[new_pos]) != king_color)
             number_of_moves++;
-    }
-    if (pos_x + 1 < 8 && pos_y + 1 < 8)
-    {
-        // OOO
-        // OKO
-        // OOX
+        return number_of_moves;
 
+    case 8:
+    case 16:
+    case 24:
+    case 32:
+    case 40:
+    case 48:
+        // OXX
+        // OKX
+        // OXX
+
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 7;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
         new_pos = pos + 9;
         if (get_color(data[new_pos]) != king_color)
             number_of_moves++;
-    }
+        return number_of_moves;
+    case 15:
+    case 23:
+    case 31:
+    case 39:
+    case 47:
+    case 55:
+        // XXO
+        // XKO
+        // XXO
+        new_pos = pos - 9;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 7;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
 
-    return number_of_moves;
+    case 56:
+        // OXX
+        // OKX
+        // OOO
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 7;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        return number_of_moves;
+
+    case 57:
+    case 58:
+    case 59:
+    case 60:
+    case 61:
+    case 62:
+        // XXX
+        // XKX
+        // OOO
+        new_pos = pos - 9;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 7;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        return number_of_moves;
+
+    case 63:
+        // XXO
+        // XKO
+        // OOO
+        new_pos = pos - 9;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        return number_of_moves;
+    default:
+        // XXX
+        // XKX
+        // XXX
+
+        new_pos = pos - 9;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 7;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 1;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 7;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 8;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        new_pos = pos + 9;
+        if (get_color(data[new_pos]) != king_color)
+            number_of_moves++;
+        return number_of_moves;
+    }
 }
 
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
@@ -1682,91 +1794,202 @@ void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
 {
 
     Color king_color = get_color(data[pos]);
-
-    int8_t pos_x = pos / width;
-    int8_t pos_y = pos % width;
-
     int8_t new_pos;
-    if (pos_x - 1 >= 0 && pos_y - 1 >= 0)
+    switch (pos)
     {
-        // XOO
-        // OKO
-        // OOO
-
-        new_pos = pos - 9;
-        if (get_color(data[new_pos]) != king_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x - 1 >= 0)
-    {
-        // OXO
-        // OKO
-        // OOO
-
-        new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x - 1 >= 0 && pos_y + 1 < 8)
-    {
-        // OOX
-        // OKO
-        // OOO
-
-        new_pos = pos - 7;
-        if (get_color(data[new_pos]) != king_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_y - 1 >= 0)
-    {
-        // OOO
-        // XKO
-        // OOO
-
-        new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_y + 1 < 8)
-    {
+    case 0:
         // OOO
         // OKX
-        // OOO
-
+        // OXX
         new_pos = pos + 1;
         if (get_color(data[new_pos]) != king_color)
             moves.add_move(new_pos);
-    }
-    if (pos_x + 1 < 8 && pos_y - 1 >= 0)
-    {
+        new_pos = pos + 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 9;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        return;
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
         // OOO
-        // OKO
-        // XOO
+        // XKX
+        // XXX
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 7;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 9;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        return;
+    case 7:
+        // OOO
+        // XKO
+        // XXO
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
 
         new_pos = pos + 7;
         if (get_color(data[new_pos]) != king_color)
             moves.add_move(new_pos);
-    }
-    if (pos_x + 1 < 8)
-    {
-        // OOO
-        // OKO
-        // OXO
-
         new_pos = pos + 8;
         if (get_color(data[new_pos]) != king_color)
             moves.add_move(new_pos);
-    }
-    if (pos_x + 1 < 8 && pos_y + 1 < 8)
-    {
-        // OOO
-        // OKO
-        // OOX
+        return;
 
+    case 8:
+    case 16:
+    case 24:
+    case 32:
+    case 40:
+    case 48:
+        // OXX
+        // OKX
+        // OXX
+
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 7;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
         new_pos = pos + 9;
         if (get_color(data[new_pos]) != king_color)
             moves.add_move(new_pos);
+        return;
+    case 15:
+    case 23:
+    case 31:
+    case 39:
+    case 47:
+    case 55:
+        // XXO
+        // XKO
+        // XXO
+        new_pos = pos - 9;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 7;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+
+    case 56:
+        // OXX
+        // OKX
+        // OOO
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 7;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        return;
+
+    case 57:
+    case 58:
+    case 59:
+    case 60:
+    case 61:
+    case 62:
+        // XXX
+        // XKX
+        // OOO
+        new_pos = pos - 9;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 7;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        return;
+
+    case 63:
+        // XXO
+        // XKO
+        // OOO
+        new_pos = pos - 9;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        return;
+    default:
+        // XXX
+        // XKX
+        // XXX
+
+        new_pos = pos - 9;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 7;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 1;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 7;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 8;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 9;
+        if (get_color(data[new_pos]) != king_color)
+            moves.add_move(new_pos);
+        return;
     }
+   
 }
 
 /// @brief generates legal moveset for a pawn at position 'pos'
@@ -1946,6 +2169,9 @@ void Board::generate_legal_moveset_for_color(Color color, MoveSet &moves) const
 
     int8_t kings_position[1];
 
+    // jump table
+    // instead of implementing logic with a lot of comparions
+    // jump table can be created, that can be indexed with pawn type
     int8_t *table[6]{pawns_positions, knights_positions, bishops_positions, rooks_positions, queens_position, kings_position};
     int8_t index_table[6]{0, 0, 0, 0, 0, 0};
 
@@ -2005,6 +2231,10 @@ void Board::generate_legal_moveset_for_color(Color color, MoveSet &moves) const
 int16_t Board::estimate_position() const
 {
     int16_t estimation = 0;
+    // jump table
+    // instead of implementing logic with a lot of comparions
+    // jump table can be created, that can be indexed with pawn type
+
     uint16_t (*table[])(const Piece *, const int8_t){
         generate_no_legal_moves_pawn,
         generate_no_legal_moves_knight,

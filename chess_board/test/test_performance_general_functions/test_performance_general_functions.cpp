@@ -27,8 +27,8 @@ int performance_test_estimate_position(void)
     float f_avg = avg / no_test_cases;
 
     char timer_c_str[70];
-    exec_time_description(701, f_avg, timer_c_str);
-    UNITY_TEST_ASSERT(f_avg == 701, __LINE__, timer_c_str);
+    exec_time_description(689, f_avg, timer_c_str);
+    UNITY_TEST_ASSERT(f_avg == 689, __LINE__, timer_c_str);
 
     return 0;
 }
