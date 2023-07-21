@@ -1,4 +1,26 @@
 #include <Board.h>
+
+#define TOP_LEFT 0
+#define TOP_RIGHT 7
+#define RIGHT 2
+#define BOTTOM_LEFT 56
+#define BOTTOM_RIGHT 63
+#define AL_TOP_LEFT 9
+#define AL_TOP_RIGHT 14
+#define AL_BOTTOM_LEFT 49
+#define AL_BOTTOM_RIGHT 54
+
+// chess board ids
+
+//  0  1  2  3  4  5  6  7
+//  8  9 10 11 12 13 14 15
+// 16 17 18 19 20 21 22 23
+// 24 25 26 27 28 29 30 31
+// 32 33 34 35 36 37 38 39
+// 40 41 42 43 44 45 46 47
+// 48 49 50 51 52 53 54 55
+// 56 57 58 59 60 61 62 63
+
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
@@ -145,101 +167,539 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
 
     uint16_t number_of_moves = 0;
     Color knight_color = get_color(data[pos]);
-
-    int8_t pos_x = pos / 8;
-    int8_t pos_y = pos % 8;
-
     int8_t new_pos;
-    if (pos_x - 2 >= 0 && pos_y - 1 >= 0)
+    switch (pos)
     {
-        //  X O
+
+    case 0:
+        // 8 |N|#|_|#|_|#|_|#|
+        // 7 |#|_|X|_|#|_|#|_|
+        // 6 |_|X|_|#|_|#|_|#|
+        // 5 |#|_|#|_|#|_|#|_|
+        // 4 |_|#|_|#|_|#|_|#|
+        // 3 |#|_|#|_|#|_|#|_|
+        // 2 |_|#|_|#|_|#|_|#|
+        // 1 |#|_|#|_|#|_|#|_|
+        //    a b c d e f g h
+
+        //  O O
         // O   O
         //   N
-        // O   O
+        // O   X
+        //  O X
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case 1:
         //  O O
+        // O   O
+        //   N
+        // O   X
+        //  X X
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+        //  O O
+        // O   O
+        //   N
+        // X   X
+        //  X X
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case 6:
+        //  O O
+        // O   O
+        //   N
+        // X   O
+        //  X X
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        break;
+    case TOP_RIGHT:
+        //  O O
+        // O   O
+        //   N
+        // X   O
+        //  X O
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+
+    case 8:
+        //  O O
+        // O   X
+        //   N
+        // O   X
+        //  O X
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        break;
+    case 16:
+    case 24:
+    case 32:
+    case 40:
+        //  O X
+        // O   X
+        //   N
+        // O   X
+        //  O X
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case 48:
+        //  O X
+        // O   X
+        //   N
+        // O   X
+        //  O O
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case 15:
+        //  O O
+        // X   O
+        //   N
+        // X   O
+        //  X O
+
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+
+    case 23:
+    case 31:
+    case 39:
+    case 47:
+        //  X O
+        // X   O
+        //   N
+        // X   O
+        //  X O
+
         new_pos = pos - 17;
         if (get_color(data[new_pos]) != knight_color)
-            number_of_moves++;
-    }
+            ++number_of_moves;
 
-    if (pos_x - 2 >= 0 && pos_y + 1 < 8)
-    {
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case 55:
+        //  X O
+        // X   O
+        //   N
+        // X   O
+        //  O O
+
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        break;
+    case BOTTOM_LEFT:
         //  O X
-        // O   O
+        // O   X
         //   N
         // O   O
         //  O O
         new_pos = pos - 15;
         if (get_color(data[new_pos]) != knight_color)
-            number_of_moves++;
-    }
-    if (pos_x - 1 >= 0 && pos_y + 2 < 8)
-    {
-        //  O O
-        // O   X
-        //   N
-        // O   O
-        //  O O
+            ++number_of_moves;
         new_pos = pos - 6;
         if (get_color(data[new_pos]) != knight_color)
-            number_of_moves++;
-    }
-    if (pos_x + 1 < 8 && pos_y + 2 < 8)
-    {
-        //  O O
+            ++number_of_moves;
+        break;
+    case 57:
+        //  X X
+        // O   X
+        //   N
         // O   O
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case 58:
+    case 59:
+    case 60:
+    case 61:
+        //  X X
+        // X   X
+        //   N
+        // O   O
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case 62:
+        //  X X
+        // X   O
+        //   N
+        // O   O
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case BOTTOM_RIGHT:
+        //  X O
+        // X   O
+        //   N
+        // O   O
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        break;
+
+    case AL_TOP_LEFT:
+
+        //  O O
+        // O   X
+        //   N
+        // O   X
+        //  X X
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+        //  O O
+        // X   X
+        //   N
+        // X   X
+        //  X X
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case AL_TOP_RIGHT:
+        //  O O
+        // X   O
+        //   N
+        // X   O
+        //  X X
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case 22:
+    case 30:
+    case 38:
+    case 46:
+        //  X X
+        // X   O
+        //   N
+        // X   O
+        //  X X
+
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+
+    case 17:
+    case 25:
+    case 33:
+    case 41:
+        //  X X
+        // O   X
+        //   N
+        // O   X
+        //  X X
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        break;
+    case AL_BOTTOM_LEFT:
+        //  X X
+        // O   X
         //   N
         // O   X
         //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
         new_pos = pos + 10;
         if (get_color(data[new_pos]) != knight_color)
-            number_of_moves++;
-    }
-    if (pos_x + 2 < 8 && pos_y + 1 < 8)
-    {
-        //  O O
-        // O   O
+            ++number_of_moves;
+        break;
+    case 50:
+    case 51:
+    case 52:
+    case 53:
+        //  X X
+        // X   X
         //   N
-        // O   O
-        //  O X
-        new_pos = pos + 17;
+        // X   X
+        //  O O
+        new_pos = pos - 17;
         if (get_color(data[new_pos]) != knight_color)
-            number_of_moves++;
-    }
-    if (pos_x + 2 < 8 && pos_y - 1 >= 0)
-    {
-        //  O O
-        // O   O
-        //   N
-        // O   O
-        //  X O
-        new_pos = pos + 15;
+            ++number_of_moves;
+        new_pos = pos - 15;
         if (get_color(data[new_pos]) != knight_color)
-            number_of_moves++;
-    }
-    if (pos_x + 1 < 8 && pos_y - 2 >= 0)
-    {
-        //  O O
-        // O   O
-        //   N
-        // X   O
-        //  O O
-        new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            number_of_moves++;
-    }
-    if (pos_x - 1 >= 0 && pos_y - 2 >= 0)
-    {
-        //  O O
-        // X   O
-        //   N
-        // O   O
-        //  O O
+            ++number_of_moves;
         new_pos = pos - 10;
         if (get_color(data[new_pos]) != knight_color)
-            number_of_moves++;
-    }
+            ++number_of_moves;
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    case AL_BOTTOM_RIGHT:
+        //  X X
+        // X   O
+        //   N
+        // X   O
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
 
+        break;
+    default:
+        //  X X
+        // X   X
+        //   N
+        // X   X
+        //  X X
+
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            ++number_of_moves;
+        break;
+    }
     return number_of_moves;
 }
 
@@ -677,102 +1137,539 @@ void Board::generate_legal_moveset_pawn(int8_t pos, MoveSet &moves) const
 /// @return Number of legal moves
 void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
 {
-
-    // MeasTime timer("generate_legal_moveset_knight");
     Color knight_color = get_color(data[pos]);
-
-    int8_t pos_x = pos / width;
-    int8_t pos_y = pos % width;
-
     int8_t new_pos;
-
-    if (pos_x - 2 >= 0 && pos_y - 1 >= 0)
+    switch (pos)
     {
-        //  X O
+
+    case 0:
+        // 8 |N|#|_|#|_|#|_|#|
+        // 7 |#|_|X|_|#|_|#|_|
+        // 6 |_|X|_|#|_|#|_|#|
+        // 5 |#|_|#|_|#|_|#|_|
+        // 4 |_|#|_|#|_|#|_|#|
+        // 3 |#|_|#|_|#|_|#|_|
+        // 2 |_|#|_|#|_|#|_|#|
+        // 1 |#|_|#|_|#|_|#|_|
+        //    a b c d e f g h
+
+        //  O O
         // O   O
         //   N
-        // O   O
+        // O   X
+        //  O X
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 1:
         //  O O
+        // O   O
+        //   N
+        // O   X
+        //  X X
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+        //  O O
+        // O   O
+        //   N
+        // X   X
+        //  X X
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 6:
+        //  O O
+        // O   O
+        //   N
+        // X   O
+        //  X X
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        return;
+    case TOP_RIGHT:
+        //  O O
+        // O   O
+        //   N
+        // X   O
+        //  X O
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+
+    case 8:
+        //  O O
+        // O   X
+        //   N
+        // O   X
+        //  O X
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        return;
+    case 16:
+    case 24:
+    case 32:
+    case 40:
+        //  O X
+        // O   X
+        //   N
+        // O   X
+        //  O X
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 48:
+        //  O X
+        // O   X
+        //   N
+        // O   X
+        //  O O
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 15:
+        //  O O
+        // X   O
+        //   N
+        // X   O
+        //  X O
+
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+
+    case 23:
+    case 31:
+    case 39:
+    case 47:
+        //  X O
+        // X   O
+        //   N
+        // X   O
+        //  X O
+
         new_pos = pos - 17;
         if (get_color(data[new_pos]) != knight_color)
             moves.add_move(new_pos);
-    }
-    if (pos_x - 2 >= 0 && pos_y + 1 < 8)
-    {
+
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 55:
+        //  X O
+        // X   O
+        //   N
+        // X   O
+        //  O O
+
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        return;
+    case BOTTOM_LEFT:
         //  O X
-        // O   O
+        // O   X
         //   N
         // O   O
         //  O O
         new_pos = pos - 15;
         if (get_color(data[new_pos]) != knight_color)
             moves.add_move(new_pos);
-    }
-    if (pos_x - 1 >= 0 && pos_y + 2 < 8)
-    {
-        //  O O
-        // O   X
-        //   N
-        // O   O
-        //  O O
         new_pos = pos - 6;
         if (get_color(data[new_pos]) != knight_color)
             moves.add_move(new_pos);
-    }
-    if (pos_x + 1 < 8 && pos_y + 2 < 8)
-    {
-        //  O O
-        // O   O
-        //   N
+        return;
+    case 57:
+        //  X X
         // O   X
-        //  O O
-        new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x + 2 < 8 && pos_y + 1 < 8)
-    {
-        //  O O
-        // O   O
-        //   N
-        // O   O
-        //  O X
-        new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x + 2 < 8 && pos_y - 1 >= 0)
-    {
-        //  O O
-        // O   O
-        //   N
-        // O   O
-        //  X O
-        new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x + 1 < 8 && pos_y - 2 >= 0)
-    {
-        //  O O
-        // O   O
-        //   N
-        // X   O
-        //  O O
-        new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            moves.add_move(new_pos);
-    }
-    if (pos_x - 1 >= 0 && pos_y - 2 >= 0)
-    {
-        //  O O
-        // X   O
         //   N
         // O   O
         //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 58:
+    case 59:
+    case 60:
+    case 61:
+        //  X X
+        // X   X
+        //   N
+        // O   O
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
         new_pos = pos - 10;
         if (get_color(data[new_pos]) != knight_color)
             moves.add_move(new_pos);
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 62:
+        //  X X
+        // X   O
+        //   N
+        // O   O
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case BOTTOM_RIGHT:
+        //  X O
+        // X   O
+        //   N
+        // O   O
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        return;
+
+    case AL_TOP_LEFT:
+
+        //  O O
+        // O   X
+        //   N
+        // O   X
+        //  X X
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+        //  O O
+        // X   X
+        //   N
+        // X   X
+        //  X X
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case AL_TOP_RIGHT:
+        //  O O
+        // X   O
+        //   N
+        // X   O
+        //  X X
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 22:
+    case 30:
+    case 38:
+    case 46:
+        //  X X
+        // X   O
+        //   N
+        // X   O
+        //  X X
+
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+
+    case 17:
+    case 25:
+    case 33:
+    case 41:
+        //  X X
+        // O   X
+        //   N
+        // O   X
+        //  X X
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        return;
+    case AL_BOTTOM_LEFT:
+        //  X X
+        // O   X
+        //   N
+        // O   X
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case 50:
+    case 51:
+    case 52:
+    case 53:
+        //  X X
+        // X   X
+        //   N
+        // X   X
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
+    case AL_BOTTOM_RIGHT:
+        //  X X
+        // X   O
+        //   N
+        // X   O
+        //  O O
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        return;
+    default:
+        //  X X
+        // X   X
+        //   N
+        // X   X
+        //  X X
+
+        new_pos = pos - 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos - 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos - 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos + 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos + 17;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos + 15;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos + 6;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+
+        new_pos = pos - 10;
+        if (get_color(data[new_pos]) != knight_color)
+            moves.add_move(new_pos);
+        return;
     }
 }
 
