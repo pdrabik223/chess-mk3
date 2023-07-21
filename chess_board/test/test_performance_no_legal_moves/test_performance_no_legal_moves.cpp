@@ -52,13 +52,13 @@ int performance_test_generate_no_legal_moves_b_pawn(void)
 }
 int performance_test_generate_no_legal_moves_w_knight(void)
 {
-    PERFORMANCE_TEST(generate_no_legal_moves_knight, 19.00, w_knight);
+    PERFORMANCE_TEST(generate_no_legal_moves_knight, 17.00, w_knight);
 
     return 0;
 }
 int performance_test_generate_no_legal_moves_b_knight(void)
 {
-    PERFORMANCE_TEST(generate_no_legal_moves_knight, 18.00, b_knight);
+    PERFORMANCE_TEST(generate_no_legal_moves_knight, 17.00, b_knight);
     return 0;
 }
 
@@ -103,7 +103,7 @@ int performance_test_generate_no_legal_moves_b_queen(void)
 
 int performance_test_generate_no_legal_moves_w_king(void)
 {
-    PERFORMANCE_TEST(generate_no_legal_moves_king, 20.00, w_king);
+    PERFORMANCE_TEST(generate_no_legal_moves_king, 19.00, w_king);
 
     return 0;
 }
@@ -111,7 +111,7 @@ int performance_test_generate_no_legal_moves_w_king(void)
 int performance_test_generate_no_legal_moves_b_king(void)
 {
 
-    PERFORMANCE_TEST(generate_no_legal_moves_king, 20.00, b_king);
+    PERFORMANCE_TEST(generate_no_legal_moves_king, 19.00, b_king);
 
     return 0;
 }

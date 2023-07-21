@@ -23,7 +23,7 @@ void performance_test_estimate_all_moves_for_color(int8_t depth, Color color, fl
     board.estimate_all_moves_for_color(depth, color, moves, estimations);
     result = estimations[0];
     timer = micros() - timer;
-
+    result += 20;
     char timer_c_str[70];
     exec_time_description(expected, timer, timer_c_str);
     UNITY_TEST_ASSERT(timer == expected, __LINE__, timer_c_str);
@@ -36,7 +36,7 @@ int performance_test_estimate_all_moves_for_color_white_depth_1_starting_pos(voi
 }
 int performance_test_estimate_all_moves_for_color_black_depth_1_starting_pos(void)
 {
-    performance_test_estimate_all_moves_for_color(1, black, 288512.0);
+    performance_test_estimate_all_moves_for_color(1, black, 281848.0);
     return 0;
 }
 

@@ -11,7 +11,7 @@ void exec_time_description(long unsigned expected, long unsigned got, char *buff
 Board board(true);
 const int8_t recursion_depth = 1;
 int16_t estimations[MAX_NO_MOVES_IN_EACH_BOARD];
-bool simulate_game_for_color_white()
+void simulate_game_for_color_white()
 {
     MoveSet moves;
     auto timer = micros();
@@ -56,11 +56,11 @@ bool simulate_game_for_color_white()
     timer = micros() - timer;
 
     char timer_c_str[70];
-    exec_time_description(341432, timer, timer_c_str);
-    UNITY_TEST_ASSERT(timer == 341432, __LINE__, timer_c_str);
+    exec_time_description(333652, timer, timer_c_str);
+    UNITY_TEST_ASSERT(timer == 333652, __LINE__, timer_c_str);
 }
 
-bool simulate_game_for_color_black()
+void simulate_game_for_color_black()
 {
     auto timer = micros();
 
@@ -108,8 +108,8 @@ bool simulate_game_for_color_black()
 
     timer = micros() - timer;
     char timer_c_str[70];
-    exec_time_description(400224, timer, timer_c_str);
-    UNITY_TEST_ASSERT(timer == 400224, __LINE__, timer_c_str);
+    exec_time_description(391948, timer, timer_c_str);
+    UNITY_TEST_ASSERT(timer == 391948, __LINE__, timer_c_str);
 }
 
 // void simulate_game()

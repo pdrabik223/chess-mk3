@@ -151,6 +151,7 @@ int test_correct_move_set_next(void)
       UNITY_TEST_ASSERT(to == move[i], __LINE__, timer_c_str);
     }
   }
+  return 0;
 }
 int test_correct_move_set_get(void)
 {
@@ -186,6 +187,7 @@ int test_correct_move_set_get(void)
       UNITY_TEST_ASSERT(to == move[i], __LINE__, timer_c_str);
     }
   }
+  return 0;
 }
 int runUnityTests(void)
 {

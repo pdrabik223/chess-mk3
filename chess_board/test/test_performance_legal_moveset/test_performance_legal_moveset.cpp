@@ -50,12 +50,12 @@ int performance_test_generate_legal_moveset_b_pawn(void)
 }
 int performance_test_generate_legal_moveset_w_knight(void)
 {
-    PERFORMANCE_TEST(generate_legal_moveset_knight, 36.00, w_knight);
+    PERFORMANCE_TEST(generate_legal_moveset_knight, 20.00, w_knight);
     return 0;
 }
 int performance_test_generate_legal_moveset_b_knight(void)
 {
-    PERFORMANCE_TEST(generate_legal_moveset_knight, 36.00, b_knight);
+    PERFORMANCE_TEST(generate_legal_moveset_knight, 20.00, b_knight);
     return 0;
 }
 
@@ -84,13 +84,13 @@ int performance_test_generate_legal_moveset_b_queen(void)
 
 int performance_test_generate_legal_moveset_w_king(void)
 {
-    PERFORMANCE_TEST(generate_legal_moveset_king, 39.00, w_king);
+    PERFORMANCE_TEST(generate_legal_moveset_king, 24.00, w_king);
     return 0;
 }
 
 int performance_test_generate_legal_moveset_b_king(void)
 {
-    PERFORMANCE_TEST(generate_legal_moveset_king, 39.00, b_king);
+    PERFORMANCE_TEST(generate_legal_moveset_king, 24.00, b_king);
     return 0;
 }
 
