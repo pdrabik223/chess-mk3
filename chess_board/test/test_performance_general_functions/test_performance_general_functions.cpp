@@ -33,7 +33,7 @@ int performance_test_estimate_position(void)
     return 0;
 }
 
-void performance_test_estimate_all_moves_for_color(int8_t depth, Color color, float expected)
+void all_moves_for_color(int8_t depth, Color color, float expected)
 {
 
     MoveSet moves;
@@ -57,23 +57,23 @@ void performance_test_estimate_all_moves_for_color(int8_t depth, Color color, fl
 
 int performance_test_estimate_all_moves_for_color_white_depth_0_starting_pos(void)
 {
-    performance_test_estimate_all_moves_for_color(0, white, 12052);
+    all_moves_for_color(0, white, 12052);
     return 0;
 }
 int performance_test_estimate_all_moves_for_color_black_depth_0_starting_pos(void)
 {
-    performance_test_estimate_all_moves_for_color(0, black, 12052);
+    all_moves_for_color(0, black, 12052);
     return 0;
 }
 
 int performance_test_estimate_all_moves_for_color_white_depth_1_starting_pos(void)
 {
-    performance_test_estimate_all_moves_for_color(1, white, 25783);
+    all_moves_for_color(1, white, 25783);
     return 0;
 }
 int performance_test_estimate_all_moves_for_color_black_depth_1_starting_pos(void)
 {
-    performance_test_estimate_all_moves_for_color(1, black, 25783);
+    all_moves_for_color(1, black, 25783);
     return 0;
 }
 

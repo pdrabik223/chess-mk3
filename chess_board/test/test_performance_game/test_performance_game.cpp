@@ -10,8 +10,11 @@ void exec_time_description(long unsigned expected, long unsigned got, char *buff
 
 Board board(true);
 const int8_t recursion_depth = 1;
+long unsigned expected_times[30];
+int expected_times_index = 0;
+
 int16_t estimations[MAX_NO_MOVES_IN_EACH_BOARD];
-void simulate_game_for_color_white()
+int simulate_game_for_color_white(void *)
 {
     MoveSet moves;
     auto timer = micros();
@@ -56,11 +59,12 @@ void simulate_game_for_color_white()
     timer = micros() - timer;
 
     char timer_c_str[70];
-    exec_time_description(333652, timer, timer_c_str);
-    UNITY_TEST_ASSERT(timer == 333652, __LINE__, timer_c_str);
+    exec_time_description(expected_times[expected_times_index], timer, timer_c_str);
+    UNITY_TEST_ASSERT(timer == expected_times[expected_times_index++], __LINE__, timer_c_str);
+    return 0;
 }
 
-void simulate_game_for_color_black()
+int simulate_game_for_color_black(void *)
 {
     auto timer = micros();
 
@@ -108,8 +112,9 @@ void simulate_game_for_color_black()
 
     timer = micros() - timer;
     char timer_c_str[70];
-    exec_time_description(391948, timer, timer_c_str);
-    UNITY_TEST_ASSERT(timer == 391948, __LINE__, timer_c_str);
+    exec_time_description(expected_times[expected_times_index], timer, timer_c_str);
+    UNITY_TEST_ASSERT(timer == expected_times[expected_times_index++], __LINE__, timer_c_str);
+    return 0;
 }
 
 // void simulate_game()
@@ -136,16 +141,15 @@ void simulate_game_for_color_black()
 int runUnityTests(void)
 {
     UNITY_BEGIN();
+    // for (int i = 0; i < 4; i++)
+    expected_times[0] = 333652;
+    expected_times[1] = 391944;
 
-    RUN_TEST(simulate_game_for_color_white);
-    RUN_TEST(simulate_game_for_color_black);
-
-    // RUN_TEST(simulate_game_for_color_white);
-    // RUN_TEST(simulate_game_for_color_black);
-
-    // const int8_t recursion_depth = 0;
-    // RUN_TEST(simulate_game_for_color_white);
-    // RUN_TEST(simulate_game_for_color_black);
+    for (int i = 0; i < 1; i++)
+    {
+        RUN_TEST(simulate_game_for_color_white);
+        RUN_TEST(simulate_game_for_color_black);
+    }
 
     return UNITY_END();
 }

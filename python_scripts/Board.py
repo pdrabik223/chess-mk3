@@ -1,6 +1,6 @@
 import random
 import time
-from colorama import Back, Style
+from colorama import Back, Fore, Style
 from enum import Enum
 
 
@@ -142,6 +142,42 @@ class Board:
             if to_8_counter == 8:
                 to_8_counter = 0
 
+        print(final_string)
+
+    def display_using_unicode_minimalistic(self, from_pos:int, to_pos:int):
+      
+        to_8_counter = 0
+        to_2_counter = 0
+        final_string = ""
+        for id, piece in enumerate(self.data):
+            
+            if to_2_counter % 2 == 0:
+                background_color = Back.LIGHTBLACK_EX + Back.LIGHTBLACK_EX
+                text_color =Fore.WHITE + Fore.WHITE
+            else:
+                background_color = Back.BLACK + Back.BLACK
+                text_color =Fore.WHITE + Fore.WHITE
+                
+            if id == from_pos:
+                background_color = Back.GREEN + Back.GREEN
+            if id == to_pos:    
+                background_color = Back.RED + Back.RED
+
+            if to_8_counter%8 == 7:
+                endline = "\n"
+            else:
+                to_2_counter += 1
+                endline = ""
+          
+            final_string += (
+                background_color
+                +text_color
+                + unicode_symbol_encoding[piece.value]
+                + Style.RESET_ALL
+                + endline
+            )
+            to_8_counter += 1
+            
         print(final_string)
 
     def add_random_move(self):

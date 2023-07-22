@@ -13,6 +13,7 @@ bool simulate_game_for_color_w_time_measure(const int no_iteration, const Color 
     auto t_1 = millis();
     moves.clear();
     board.generate_legal_moveset_for_color(color, moves);
+    board.estimate_all_moves_for_color(recursion_depth, color, moves, estimations);
 
     if (moves.size == 0)
     {
@@ -53,11 +54,12 @@ bool simulate_game_for_color_w_time_measure(const int no_iteration, const Color 
         return true;
     }
 
+    auto time = millis() - t_1;
+
     int8_t from, to;
     moves.get(from, to, best_move_id);
     board.move(from, to);
 
-    auto time = millis() - t_1;
     Serial.println(":color:");
     if (color == white)
         Serial.println("white");
@@ -73,6 +75,11 @@ bool simulate_game_for_color_w_time_measure(const int no_iteration, const Color 
     Serial.println(symbol_encoding[board.data[to]]);
     Serial.println(":elapsed time:");
     Serial.println(time);
+    Serial.println(":board:");
+    board.to_string(str_representation_of_a_board);
+    Serial.println(str_representation_of_a_board);
+    Serial.println(from);
+    Serial.println(to);
     Serial.println(":iteration_end:");
 
     return false;
@@ -245,5 +252,5 @@ void setup()
 
 void loop()
 {
-    simulate_game();
+    simulate_game_w_time();
 }

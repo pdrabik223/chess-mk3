@@ -8,7 +8,7 @@ void exec_time_description(float expected, float got, char *buffer)
     description_str.toCharArray(buffer, 70);
 }
 
-void performance_test_estimate_all_moves_for_color(int8_t depth, Color color, float expected)
+void all_moves_for_color(int8_t depth, Color color, float expected)
 {
 
     MoveSet moves;
@@ -29,14 +29,14 @@ void performance_test_estimate_all_moves_for_color(int8_t depth, Color color, fl
     UNITY_TEST_ASSERT(timer == expected, __LINE__, timer_c_str);
 }
 
-int performance_test_estimate_all_moves_for_color_white_depth_1_starting_pos(void)
+int estimate_white(void)
 {
-    performance_test_estimate_all_moves_for_color(1, white, 25783.0);
+    all_moves_for_color(1, white, 333192.0);
     return 0;
 }
-int performance_test_estimate_all_moves_for_color_black_depth_1_starting_pos(void)
+int estimate_black(void)
 {
-    performance_test_estimate_all_moves_for_color(1, black, 281848.0);
+    all_moves_for_color(1, black, 281848.0);
     return 0;
 }
 
@@ -44,8 +44,8 @@ int runUnityTests(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(performance_test_estimate_all_moves_for_color_black_depth_1_starting_pos);
-
+    RUN_TEST(estimate_black);
+    RUN_TEST(estimate_white);
     return UNITY_END();
 }
 

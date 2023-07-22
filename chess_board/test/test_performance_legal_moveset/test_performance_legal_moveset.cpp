@@ -72,13 +72,13 @@ int performance_test_generate_legal_moveset_b_bishop(void)
 
 int performance_test_generate_legal_moveset_w_queen(void)
 {
-    PERFORMANCE_TEST(generate_legal_moveset_queen, 74.00, w_queen);
+    PERFORMANCE_TEST(generate_legal_moveset_queen, 75.00, w_queen);
 
     return 0;
 }
 int performance_test_generate_legal_moveset_b_queen(void)
 {
-    PERFORMANCE_TEST(generate_legal_moveset_queen, 75.00, b_queen);
+    PERFORMANCE_TEST(generate_legal_moveset_queen, 74.00, b_queen);
     return 0;
 }
 
