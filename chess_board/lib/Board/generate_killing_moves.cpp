@@ -21,12 +21,12 @@
 // 48 49 50 51 52 53 54 55
 // 56 57 58 59 60 61 62 63
 
-/// @brief generates legal moveset for a pawn at position 'pos'
+/// @brief generates killing moveset for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
-/// @param moveset stores all legal possible move positions
+/// @param moveset stores all killing possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
-/// @return Number of legal moves
-void Board::generate_legal_moveset_pawn(int8_t pos, MoveSet &moves) const
+/// @return Number of killing moves
+void Board::generate_killing_moveset_pawn(int8_t pos, MoveSet &moves) const
 {
 
     Color pawn_color = get_color(data[pos]);
@@ -34,61 +34,47 @@ void Board::generate_legal_moveset_pawn(int8_t pos, MoveSet &moves) const
     int8_t pos_x = pos / width;
     int8_t pos_y = pos % width;
 
-    if (pawn_color == black)
+    if (pawn_color == white)
     {
         // black is on top, and goes down
-
-        if (pos_x == 1)
-            if (data[pos + 16] == empty && data[pos + 8] == empty)
-                moves.add_move(pos + 16);
-
         if (pos_x + 1 < 8)
         {
-            if (data[pos + 8] == empty)
-                moves.add_move(pos + 8);
-
             if (pos_y - 1 >= 0)
                 // if pawn is not on the left edge of the chessboard
-                if (is_white(data[pos + 7]))
+                if (is_black(data[pos + 7]))
                     moves.add_move(pos + 7);
 
             if (pos_y + 1 < 8)
                 // if pawn is not on the right edge of the chessboard
-                if (is_white(data[pos + 9]))
+                if (is_black(data[pos + 9]))
                     moves.add_move(pos + 9);
         }
     }
     else
     {
         // white is on the bottom, and goes up
-        if (pos_x == 6)
-            if (data[pos - 16] == empty && data[pos - 8] == empty)
-                moves.add_move(pos - 16);
 
         if (pos_x - 1 >= 0)
         {
-            if (data[pos - 8] == empty)
-                moves.add_move(pos - 8);
-
             if (pos_y - 1 >= 0)
                 // if pawn is not on the left edge of the chessboard
-                if (is_black(data[pos - 9]))
+                if (is_white(data[pos - 9]))
                     moves.add_move(pos - 9);
 
             if (pos_y + 1 < 8)
                 // if pawn is not on the right edge of the chessboard
-                if (is_black(data[pos - 7]))
+                if (is_white(data[pos - 7]))
                     moves.add_move(pos - 7);
         }
     }
 }
 
-/// @brief generates legal moveset for a pawn at position 'pos'
+/// @brief generates killing moveset for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
-/// @param moveset stores all legal possible move positions
+/// @param moveset stores all killing possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
-/// @return Number of legal moves
-void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
+/// @return Number of killing moves
+void Board::generate_killing_moveset_knight(int8_t pos, MoveSet &moves) const
 {
     Color knight_color = get_color(data[pos]);
     int8_t new_pos;
@@ -112,10 +98,11 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   X
         //  O X
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
+
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 1:
@@ -125,13 +112,13 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   X
         //  X X
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 2:
@@ -144,16 +131,16 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // X   X
         //  X X
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 6:
@@ -163,13 +150,13 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // X   O
         //  X X
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         return;
@@ -180,10 +167,10 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // X   O
         //  X O
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
 
@@ -194,13 +181,13 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   X
         //  O X
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         return;
@@ -214,16 +201,16 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   X
         //  O X
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 48:
@@ -233,13 +220,13 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   X
         //  O O
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 15:
@@ -250,15 +237,15 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         //  X O
 
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
 
@@ -273,19 +260,19 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         //  X O
 
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 55:
@@ -296,15 +283,15 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         //  O O
 
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         return;
@@ -315,10 +302,10 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   O
         //  O O
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 57:
@@ -328,13 +315,13 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   O
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 58:
@@ -347,16 +334,16 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   O
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 62:
@@ -366,13 +353,13 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   O
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case BOTTOM_RIGHT:
@@ -382,11 +369,11 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   O
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         return;
@@ -399,16 +386,16 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   X
         //  X X
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 10:
@@ -421,22 +408,22 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // X   X
         //  X X
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case AL_TOP_RIGHT:
@@ -446,16 +433,16 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // X   O
         //  X X
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 22:
@@ -469,22 +456,22 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         //  X X
 
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
 
@@ -498,22 +485,22 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   X
         //  X X
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         return;
@@ -524,16 +511,16 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // O   X
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case 50:
@@ -546,22 +533,22 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // X   X
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     case AL_BOTTOM_RIGHT:
@@ -571,16 +558,16 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         // X   O
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         return;
@@ -592,46 +579,46 @@ void Board::generate_legal_moveset_knight(int8_t pos, MoveSet &moves) const
         //  X X
 
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
 
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
+        if (is_opposite(data[new_pos], knight_color))
             moves.add_move(new_pos);
         return;
     }
 }
 
-/// @brief generates legal moveset for a pawn at position 'pos'
+/// @brief generates killing moveset for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
-/// @param moveset stores all legal possible move positions
+/// @param moveset stores all killing possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
-/// @return Number of legal moves
-void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
+/// @return Number of killing moves
+void Board::generate_killing_moveset_king(const int8_t pos, MoveSet &moves) const
 {
 
     Color king_color = get_color(data[pos]);
@@ -643,13 +630,13 @@ void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
         // OKX
         // OXX
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 9;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         return;
     case 1:
@@ -662,19 +649,19 @@ void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
         // XKX
         // XXX
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 7;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 9;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         return;
     case 7:
@@ -682,14 +669,14 @@ void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
         // XKO
         // XXO
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
 
         new_pos = pos + 7;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         return;
 
@@ -704,19 +691,19 @@ void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
         // OXX
 
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 7;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 9;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         return;
     case 15:
@@ -729,19 +716,19 @@ void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
         // XKO
         // XXO
         new_pos = pos - 9;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 7;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
 
     case 56:
@@ -749,13 +736,13 @@ void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
         // OKX
         // OOO
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 7;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         return;
 
@@ -769,19 +756,19 @@ void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
         // XKX
         // OOO
         new_pos = pos - 9;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 7;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         return;
 
@@ -790,13 +777,13 @@ void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
         // XKO
         // OOO
         new_pos = pos - 9;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         return;
     default:
@@ -805,39 +792,39 @@ void Board::generate_legal_moveset_king(const int8_t pos, MoveSet &moves) const
         // XXX
 
         new_pos = pos - 9;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 7;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 7;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         new_pos = pos + 9;
-        if (get_color(data[new_pos]) != king_color)
+        if (is_opposite(data[new_pos], king_color))
             moves.add_move(new_pos);
         return;
     }
 }
 
-/// @brief generates legal moveset for a pawn at position 'pos'
+/// @brief generates killing moveset for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
-/// @param moveset stores all legal possible move positions
+/// @param moveset stores all killing possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
-/// @return Number of legal moves
-void Board::generate_legal_moveset_rook(const int8_t pos, MoveSet &moves) const
+/// @return Number of killing moves
+void Board::generate_killing_moveset_rook(const int8_t pos, MoveSet &moves) const
 {
 
     Color rook_color = get_color(data[pos]);
@@ -852,8 +839,8 @@ void Board::generate_legal_moveset_rook(const int8_t pos, MoveSet &moves) const
         // going down starting with position just under the rook
         new_pos = construct_coord(x, pos_y);
         if (data[new_pos] == empty)
-            moves.add_move(new_pos);
-        else if (get_color(data[new_pos]) != rook_color)
+            continue;
+        else if (is_opposite(data[new_pos], rook_color))
         {
             moves.add_move(new_pos);
             break;
@@ -866,8 +853,8 @@ void Board::generate_legal_moveset_rook(const int8_t pos, MoveSet &moves) const
         // going up starting with position just above the rook
         new_pos = construct_coord(x, pos_y);
         if (data[new_pos] == empty)
-            moves.add_move(new_pos);
-        else if (get_color(data[new_pos]) != rook_color)
+            continue;
+        else if (is_opposite(data[new_pos], rook_color))
         {
             moves.add_move(new_pos);
             break;
@@ -880,8 +867,8 @@ void Board::generate_legal_moveset_rook(const int8_t pos, MoveSet &moves) const
         // going right starting with position just to the right from the rook
         new_pos = construct_coord(pos_x, y);
         if (data[new_pos] == empty)
-            moves.add_move(new_pos);
-        else if (get_color(data[new_pos]) != rook_color)
+            continue;
+        else if (is_opposite(data[new_pos], rook_color))
         {
             moves.add_move(new_pos);
             break;
@@ -894,8 +881,8 @@ void Board::generate_legal_moveset_rook(const int8_t pos, MoveSet &moves) const
         // going left starting with position just to the left from the rook
         new_pos = construct_coord(pos_x, y);
         if (data[new_pos] == empty)
-            moves.add_move(new_pos);
-        else if (get_color(data[new_pos]) != rook_color)
+            continue;
+        else if (is_opposite(data[new_pos], rook_color))
         {
             moves.add_move(new_pos);
             break;
@@ -905,12 +892,12 @@ void Board::generate_legal_moveset_rook(const int8_t pos, MoveSet &moves) const
     }
 }
 
-/// @brief generates legal moveset for a pawn at position 'pos'
+/// @brief generates killing moveset for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
-/// @param moveset stores all legal possible move positions
+/// @param moveset stores all killing possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
-/// @return Number of legal moves
-void Board::generate_legal_moveset_bishop(const int8_t pos, MoveSet &moves) const
+/// @return Number of killing moves
+void Board::generate_killing_moveset_bishop(const int8_t pos, MoveSet &moves) const
 {
 
     Color bishop_color = get_color(data[pos]);
@@ -924,8 +911,8 @@ void Board::generate_legal_moveset_bishop(const int8_t pos, MoveSet &moves) cons
         // going down and right starting with position just to the right and down from the bishop
         new_pos = construct_coord(x, y);
         if (data[new_pos] == empty)
-            moves.add_move(new_pos);
-        else if (get_color(data[new_pos]) != bishop_color)
+            continue;
+        else if (is_opposite(data[new_pos], bishop_color))
         {
             moves.add_move(new_pos);
             break;
@@ -938,8 +925,8 @@ void Board::generate_legal_moveset_bishop(const int8_t pos, MoveSet &moves) cons
         // going down and left starting with position just to the left and down from the bishop
         new_pos = construct_coord(x, y);
         if (data[new_pos] == empty)
-            moves.add_move(new_pos);
-        else if (get_color(data[new_pos]) != bishop_color)
+            continue;
+        else if (is_opposite(data[new_pos], bishop_color))
         {
             moves.add_move(new_pos);
             break;
@@ -952,8 +939,8 @@ void Board::generate_legal_moveset_bishop(const int8_t pos, MoveSet &moves) cons
         // going up and left starting with position just to the left and up from the bishop
         new_pos = construct_coord(x, y);
         if (data[new_pos] == empty)
-            moves.add_move(new_pos);
-        else if (get_color(data[new_pos]) != bishop_color)
+            continue;
+        else if (is_opposite(data[new_pos], bishop_color))
         {
             moves.add_move(new_pos);
             break;
@@ -966,8 +953,8 @@ void Board::generate_legal_moveset_bishop(const int8_t pos, MoveSet &moves) cons
         // going up and right starting with position just to the right and up from the bishop
         new_pos = construct_coord(x, y);
         if (data[new_pos] == empty)
-            moves.add_move(new_pos);
-        else if (get_color(data[new_pos]) != bishop_color)
+            continue;
+        else if (is_opposite(data[new_pos], bishop_color))
         {
             moves.add_move(new_pos);
             break;
@@ -977,24 +964,24 @@ void Board::generate_legal_moveset_bishop(const int8_t pos, MoveSet &moves) cons
     }
 }
 
-/// @brief generates legal moveset for a pawn at position 'pos'
+/// @brief generates killing moveset for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
-/// @param moveset stores all legal possible move positions
+/// @param moveset stores all killing possible move positions
 /// @param number_of_moves noumber of moves already present in moveset array
-/// @return Number of legal moves
-void Board::generate_legal_moveset_queen(const int8_t pos, MoveSet &moves) const
+/// @return Number of killing moves
+void Board::generate_killing_moveset_queen(const int8_t pos, MoveSet &moves) const
 {
 
     //  queen is basically rook & bishop at once, so why even bother?
-    generate_legal_moveset_rook(pos, moves);
-    generate_legal_moveset_bishop(pos, moves);
+    generate_killing_moveset_rook(pos, moves);
+    generate_killing_moveset_bishop(pos, moves);
 }
 
-/// @brief generates legal moveset for a given color
+/// @brief generates killing moveset for a given color
 /// @param color color for which all moves possible will be generated
-/// @param moveset stores all legal possible move positions
-/// @return Number of legal moves
-void Board::generate_legal_moveset_for_color(Color color, MoveSet &moves) const
+/// @param moveset stores all killing possible move positions
+/// @return Number of killing moves
+void Board::generate_killing_moveset_for_color(Color color, MoveSet &moves) const
 {
 
     int8_t queens_position[1];
@@ -1033,37 +1020,37 @@ void Board::generate_legal_moveset_for_color(Color color, MoveSet &moves) const
     for (int8_t p = 0; p < index_table[w_pawn - 1]; p++)
     {
         number_of_moves = moves.size;
-        generate_legal_moveset_pawn(pawns_positions[p], moves);
+        generate_killing_moveset_pawn(pawns_positions[p], moves);
         moves.add_starting_position(moves.size - number_of_moves, pawns_positions[p]);
     }
     for (int8_t k = 0; k < index_table[w_knight - 1]; k++)
     {
         number_of_moves = moves.size;
-        generate_legal_moveset_knight(knights_positions[k], moves);
+        generate_killing_moveset_knight(knights_positions[k], moves);
         moves.add_starting_position(moves.size - number_of_moves, knights_positions[k]);
     }
     if (index_table[w_queen - 1] > 0)
     {
         number_of_moves = moves.size;
-        generate_legal_moveset_queen(queens_position[0], moves);
+        generate_killing_moveset_queen(queens_position[0], moves);
         moves.add_starting_position(moves.size - number_of_moves, queens_position[0]);
     }
     for (int8_t b = 0; b < index_table[w_bishop - 1]; b++)
     {
         number_of_moves = moves.size;
-        generate_legal_moveset_bishop(bishops_positions[b], moves);
+        generate_killing_moveset_bishop(bishops_positions[b], moves);
         moves.add_starting_position(moves.size - number_of_moves, bishops_positions[b]);
     }
     for (int8_t r = 0; r < index_table[w_rook - 1]; r++)
     {
         number_of_moves = moves.size;
-        generate_legal_moveset_rook(rooks_positions[r], moves);
+        generate_killing_moveset_rook(rooks_positions[r], moves);
         moves.add_starting_position(moves.size - number_of_moves, rooks_positions[r]);
     }
     if (index_table[w_king - 1] > 0)
     {
         number_of_moves = moves.size;
-        generate_legal_moveset_king(kings_position[0], moves);
+        generate_killing_moveset_king(kings_position[0], moves);
         moves.add_starting_position(moves.size - number_of_moves, kings_position[0]);
     }
 }

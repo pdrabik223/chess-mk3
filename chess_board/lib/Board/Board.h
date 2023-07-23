@@ -173,9 +173,58 @@ public:
     /// @return Number of legal moves
     void generate_legal_moveset_for_color(Color color, MoveSet &moveset) const;
 
+    /// @brief generates killing moveset for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param moveset stores all killing possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of killing moves
+    void generate_killing_moveset_pawn(const int8_t pos, MoveSet &moveset) const;
+
+    /// @brief generates killing moveset for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param moveset stores all killing possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of killing moves
+    void generate_killing_moveset_knight(const int8_t pos, MoveSet &moveset) const;
+
+    /// @brief generates killing moveset for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param moveset stores all killing possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of killing moves
+    void generate_killing_moveset_king(const int8_t pos, MoveSet &moveset) const;
+
+    /// @brief generates killing moveset for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param moveset stores all killing possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of killing moves
+    void generate_killing_moveset_rook(const int8_t pos, MoveSet &moveset) const;
+
+    /// @brief generates killing moveset for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param moveset stores all killing possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of killing moves
+    void generate_killing_moveset_bishop(const int8_t pos, MoveSet &moveset) const;
+
+    /// @brief generates killing moveset for a pawn at position 'pos'
+    /// @param pos defines for witch pawn moveset should be calculated
+    /// @param moveset stores all killing possible move positions
+    /// @param number_of_moves noumber of moves already present in moveset array
+    /// @return Number of killing moves
+    void generate_killing_moveset_queen(const int8_t pos, MoveSet &moveset) const;
+
+    /// @brief generates killing moveset for a given color
+    /// @param color color for which all moves possible will be generated
+    /// @param moveset stores all killing possible move positions
+    /// @return Number of killing moves
+    void generate_killing_moveset_for_color(Color color, MoveSet &moveset) const;
+
     int16_t estimate_position() const;
 
-    void estimate_all_moves_for_color(const int8_t depth, Color color, MoveSet &moveset, int16_t *estimations);
+    void estimate_all_moves_for_color_a(const int8_t depth, Color color, MoveSet &moveset, int16_t *estimations);
+    void estimate_all_moves_for_color_b(const int8_t depth, Color color, MoveSet &moveset, int16_t *estimations);
 
     /// @brief move tree searching algorithm, generates move tree to calculate best move in position
     /// @param depth
@@ -192,10 +241,12 @@ public:
     /// @param player_color
     /// @return
     int16_t alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
-
-    int16_t Board::nega_scout(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
+    int16_t null_move_alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
+    int16_t nega_scout(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
 
     int16_t pvs(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
+
+    int16_t Board::q_search(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
 
     bool check_for_white_king();
     bool check_for_black_king();

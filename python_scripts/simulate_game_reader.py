@@ -55,7 +55,9 @@ class SimulateGameTestCase:
             board.moves_estimation = moves_estimation
             board.moves = moves
             board.color_to_move = param_dict['color']
-
+            board.moving_to = int(param_dict['to'])
+            board.moving_from = int(param_dict['from'])
+            
         return SimulateGameTestCase(
             iteration=int(param_dict['iteration']),
             color=param_dict['color'],
@@ -73,13 +75,13 @@ if __name__ == "__main__":
     buffer = ""
     while True:
         resp: bytes = device.readline()
-        print(resp)
+        # print(resp)
         # f.writelines(resp.decode("utf-8"))
         try:
             if "iteration_end" in resp.decode("utf-8"):
                 buffer = buffer + resp.decode("utf-8")
                 test_example = SimulateGameTestCase.parse_string(buffer)
-                test_example.board.display_using_unicode()
+                test_example.board.display_using_unicode_minimalistic(use_class_variables=True)
                 buffer = ""
             else:
                 buffer = buffer + resp.decode("utf-8")

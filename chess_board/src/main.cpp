@@ -23,7 +23,8 @@ bool simulate_game_for_color(const int no_iteration, const Color color, Board &b
         Serial.flush();
         return true;
     }
-    board.estimate_all_moves_for_color(recursion_depth, color, moves, estimations);
+
+    board.estimate_all_moves_for_color_a(recursion_depth, color, moves, estimations);
 
     int16_t best_move_estimation = estimations[0];
     uint8_t best_move_id = 0;
@@ -117,11 +118,11 @@ void simulate_game()
     while (true)
     {
 
-        if (simulate_game_for_color(no_iteration, black, board, 2))
+        if (simulate_game_for_color(no_iteration, white, board, 2))
             return;
 
         delay(1000);
-        if (simulate_game_for_color(no_iteration, white, board, 2))
+        if (simulate_game_for_color(no_iteration, black, board, 2))
             return;
 
         delay(1000);

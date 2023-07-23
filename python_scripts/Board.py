@@ -75,7 +75,9 @@ class Board:
         self.moves = []
         self.moves_estimation = []
         self.color_to_move = ""
-
+        self.moving_from = 0
+        self.moving_to = 0
+        
     def display_using_unicode(self):
         starting_positions_highlight_color = Back.GREEN
         moves_highlight_color = Back.YELLOW
@@ -144,8 +146,12 @@ class Board:
 
         print(final_string)
 
-    def display_using_unicode_minimalistic(self, from_pos:int, to_pos:int):
-      
+    def display_using_unicode_minimalistic(self, from_pos:int = None, to_pos:int= None, use_class_variables:bool = False):
+        
+        if use_class_variables:
+            from_pos = self.moving_from
+            to_pos = self.moving_to
+        
         to_8_counter = 0
         to_2_counter = 0
         final_string = ""

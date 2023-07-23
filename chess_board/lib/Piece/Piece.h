@@ -32,4 +32,5 @@ bool is_black(Piece piece);
 Color get_color(Piece piece);
 
 Color reverse_color(const Color current_color);
+bool is_opposite(const Piece piece, const Color opposite_to);
 #endif

@@ -8,6 +8,15 @@ Color get_color(Piece piece)
         return white;
     return no_color;
 }
+
+bool is_opposite(const Piece piece, const Color opposite_to)
+{
+    auto color = get_color(piece);
+    if (color == no_color)
+        return false;
+    return color != opposite_to;
+}
+
 Color reverse_color(const Color current_color)
 {
     if (current_color == white)
