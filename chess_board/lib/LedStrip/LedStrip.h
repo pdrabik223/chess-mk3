@@ -43,7 +43,7 @@ public:
     /// @returns direct access to led under the given position
     CRGB &operator[](const uint32_t position)
     {
-        assert(position < Size());
+        // assert(position < Size());
         return leds[position];
     }
     /// forces led strip to update it's colors

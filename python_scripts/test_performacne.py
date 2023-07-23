@@ -36,7 +36,9 @@ if __name__ == "__main__":
             if "board" in resp.decode("utf-8"):
 
                 str_board: bytes = device.readline()
+                from_header:bytes = device.readline()
                 str_from:bytes = device.readline()
+                to_header:bytes = device.readline()
                 str_to:bytes = device.readline()
                 
                 str_board = str(str_board.decode("utf-8")).strip()

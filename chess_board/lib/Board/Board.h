@@ -1,4 +1,3 @@
-#include <String.h>
 #include <MeasTime.h>
 #include <Piece.h>
 #include <MoveSet.h>
@@ -178,9 +177,25 @@ public:
 
     void estimate_all_moves_for_color(const int8_t depth, Color color, MoveSet &moveset, int16_t *estimations);
 
+    /// @brief move tree searching algorithm, generates move tree to calculate best move in position
+    /// @param depth
+    /// @param alpha
+    /// @param beta
+    /// @param player_color
+    /// @return
+    int16_t min_max(const int8_t depth, const Color player_color);
+
+    /// @brief move tree searching algorithm, generates move tree to calculate best move in position
+    /// @param depth
+    /// @param alpha
+    /// @param beta
+    /// @param player_color
+    /// @return
     int16_t alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
 
-    // int16_t pvs(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
+    int16_t Board::nega_scout(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
+
+    int16_t pvs(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
 
     bool check_for_white_king();
     bool check_for_black_king();

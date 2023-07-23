@@ -1,4 +1,4 @@
-#include <String.h>
+
 #include <Arduino.h>
 #ifndef MEAS_TIME_H
 #define MEAS_TIME_H
