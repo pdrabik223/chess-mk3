@@ -21,7 +21,7 @@ int simulate_game_for_color_white(void *)
 
     board.generate_legal_moveset_for_color(white, moves);
 
-    board.estimate_all_moves_for_color_a(recursion_depth, white, moves, estimations);
+    board.estimate_all_moves_for_color(recursion_depth, white, moves, estimations);
 
     if (moves.size == 0)
         UNITY_TEST_ASSERT(false, __LINE__, "END GAME");
@@ -72,7 +72,7 @@ int simulate_game_for_color_black(void *)
     MoveSet moves;
     board.generate_legal_moveset_for_color(color, moves);
 
-    board.estimate_all_moves_for_color_a(recursion_depth, color, moves, estimations);
+    board.estimate_all_moves_for_color(recursion_depth, color, moves, estimations);
 
     if (moves.size == 0)
 

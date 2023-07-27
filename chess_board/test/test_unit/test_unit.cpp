@@ -189,6 +189,21 @@ int test_correct_move_set_get(void)
   }
   return 0;
 }
+int test_generate_killing_moveset(void)
+{
+
+  MoveSet moves;
+  Board board(true);
+  board.generate_killing_moveset_for_color(white, moves);
+  board.generate_killing_moveset_for_color(black, moves);
+
+  String info_str(moves.size);
+  char info_c_str[30];
+  info_str.toCharArray(info_c_str, 30);
+  UNITY_TEST_ASSERT(moves.size == 0, __LINE__, info_c_str);
+
+  return 0;
+}
 int runUnityTests(void)
 {
   UNITY_BEGIN();
@@ -200,6 +215,7 @@ int runUnityTests(void)
   RUN_TEST(test_if_starting_position_is_equal);
   RUN_TEST(test_correct_move_set_next);
   RUN_TEST(test_correct_move_set_get);
+  RUN_TEST(test_generate_killing_moveset);
 
   return UNITY_END();
 }

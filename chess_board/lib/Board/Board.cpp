@@ -98,55 +98,55 @@ void Board::set_piece(uint8_t x, uint8_t y, Piece piece)
 {
     data[x * 8 + y] = piece;
 }
-void Board::from_string(const String &board_str)
-{
+// void Board::from_string(const String &board_str)
+// {
 
-    for (int8_t i = 0; i < 64; i++)
-    {
-        switch (board_str[i])
-        {
-        case 'e':
-            data[i] = empty;
-            break;
-        case 'p':
-            data[i] = w_pawn;
-            break;
-        case 'n':
-            data[i] = w_knight;
-            break;
-        case 'b':
-            data[i] = w_bishop;
-            break;
-        case 'r':
-            data[i] = w_rook;
-            break;
-        case 'q':
-            data[i] = w_queen;
-            break;
-        case 'k':
-            data[i] = w_king;
-            break;
-        case 'P':
-            data[i] = b_pawn;
-            break;
-        case 'N':
-            data[i] = b_knight;
-            break;
-        case 'B':
-            data[i] = b_bishop;
-            break;
-        case 'R':
-            data[i] = b_rook;
-            break;
-        case 'Q':
-            data[i] = b_queen;
-            break;
-        case 'K':
-            data[i] = b_king;
-            break;
-        }
-    }
-}
+//     for (int8_t i = 0; i < 64; i++)
+//     {
+//         switch (board_str[i])
+//         {
+//         case 'e':
+//             data[i] = empty;
+//             break;
+//         case 'p':
+//             data[i] = w_pawn;
+//             break;
+//         case 'n':
+//             data[i] = w_knight;
+//             break;
+//         case 'b':
+//             data[i] = w_bishop;
+//             break;
+//         case 'r':
+//             data[i] = w_rook;
+//             break;
+//         case 'q':
+//             data[i] = w_queen;
+//             break;
+//         case 'k':
+//             data[i] = w_king;
+//             break;
+//         case 'P':
+//             data[i] = b_pawn;
+//             break;
+//         case 'N':
+//             data[i] = b_knight;
+//             break;
+//         case 'B':
+//             data[i] = b_bishop;
+//             break;
+//         case 'R':
+//             data[i] = b_rook;
+//             break;
+//         case 'Q':
+//             data[i] = b_queen;
+//             break;
+//         case 'K':
+//             data[i] = b_king;
+//             break;
+//         }
+//     }
+// }
 
 void Board::to_string(char *board_str)
 {
@@ -227,7 +227,6 @@ int16_t Board::estimate_position() const
 
     return estimation;
 }
-
 
 bool Board::check_for_white_king()
 {

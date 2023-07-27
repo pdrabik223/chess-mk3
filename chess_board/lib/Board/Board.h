@@ -1,4 +1,4 @@
-#include <MeasTime.h>
+// #include <MeasTime.h>
 #include <Piece.h>
 #include <MoveSet.h>
 #ifndef BOARD_H
@@ -117,7 +117,7 @@ public:
 
     void set_piece(uint8_t x, uint8_t y, Piece piece);
 
-    void from_string(const String &board_str);
+    // void from_string(const String &board_str);
 
     void to_string(char *board_str);
 
@@ -223,9 +223,8 @@ public:
 
     int16_t estimate_position() const;
 
-    void estimate_all_moves_for_color_a(const int8_t depth, Color color, MoveSet &moveset, int16_t *estimations);
-    void estimate_all_moves_for_color_b(const int8_t depth, Color color, MoveSet &moveset, int16_t *estimations);
-
+    void estimate_all_moves_for_color(const int8_t depth, Color color, MoveSet &moveset, int16_t *estimations);
+    void estimate_all_moves_for_color_b(const int8_t depth, Color color, MoveSet &moves, int16_t *estimations);
     /// @brief move tree searching algorithm, generates move tree to calculate best move in position
     /// @param depth
     /// @param alpha
@@ -241,12 +240,13 @@ public:
     /// @param player_color
     /// @return
     int16_t alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
+    int16_t alpha_beta_q_search(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
     int16_t null_move_alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
     int16_t nega_scout(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
 
     int16_t pvs(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
 
-    int16_t Board::q_search(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
+    int16_t q_search(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color);
 
     bool check_for_white_king();
     bool check_for_black_king();

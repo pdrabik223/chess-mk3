@@ -45,7 +45,7 @@ void all_moves_for_color(int8_t depth, Color color, float expected)
     auto timer = micros();
 
     board.generate_legal_moveset_for_color(color, moves);
-    board.estimate_all_moves_for_color_a(depth, color, moves, estimations);
+    board.estimate_all_moves_for_color(depth, color, moves, estimations);
     timer = micros() - timer;
 
     result = estimations[0];

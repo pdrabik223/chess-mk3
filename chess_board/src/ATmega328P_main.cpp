@@ -24,7 +24,7 @@ bool simulate_game_for_color(const int no_iteration, const Color color, Board &b
         return true;
     }
 
-    board.estimate_all_moves_for_color_a(recursion_depth, color, moves, estimations);
+    board.estimate_all_moves_for_color(recursion_depth, color, moves, estimations);
 
     int16_t best_move_estimation = estimations[0];
     uint8_t best_move_id = 0;
@@ -76,35 +76,46 @@ bool simulate_game_for_color(const int no_iteration, const Color color, Board &b
     Serial.println(from);
     Serial.println(":to:");
     Serial.println(to);
-    Serial.println(":position_estimation:");
-    Serial.println(board.estimate_position());
-    Serial.println(":no_moves:");
-    Serial.println(moves.size);
-    Serial.println(":starting_positions_str:");
+    // Serial.println(":position_estimation:");
+    // Serial.println(board.estimate_position());
+    // Serial.println(":no_moves:");
+    // Serial.println(moves.size);
+    // Serial.println(":starting_positions_str:");
 
-    for (int i = 0; i < moves.size; i++)
-    {
+    // for (int i = 0; i < moves.size; i++)
+    // {
 
-        int8_t l_from, l_to;
-        moves.get(l_from, l_to, i);
-        Serial.println(l_from);
-    }
+    //     int8_t l_from, l_to;
+    //     moves.get(l_from, l_to, i);
+    //     Serial.println(l_from);
+    // }
 
-    Serial.println(":moves_str:");
-    for (int i = 0; i < moves.size; i++)
-    {
+    // Serial.println(":moves_str:");
+    // for (int i = 0; i < moves.size; i++)
+    // {
 
-        int8_t l_from, l_to;
-        moves.get(l_from, l_to, i);
-        Serial.println(l_to);
-    }
-    Serial.println(":moves_estimation:");
+    //     int8_t l_from, l_to;
+    //     moves.get(l_from, l_to, i);
+    //     Serial.println(l_to);
+    // }
+    // Serial.println(":moves_estimation:");
 
-    for (int i = 0; i < moves.size; i++)
-        Serial.println(estimations[i]);
+    // for (int i = 0; i < moves.size; i++)
+    //     Serial.println(estimations[i]);
 
-    Serial.println(":best_move_estimation:");
-    Serial.println(best_move_estimation);
+    // Serial.println(":best_move_estimation:");
+    // Serial.println(best_move_estimation);
+
+    // Serial.println(":killer moves:");
+    // MoveSet killer_moves;
+    // board.generate_killing_moveset_for_color(color, killer_moves);
+    // for (int i = 0; i < killer_moves.size; i++)
+    // {
+
+    //     int8_t l_from, l_to;
+    //     killer_moves.get(l_from, l_to, i);
+    //     Serial.println(l_to);
+    // }
 
     Serial.println(":iteration_end:");
     Serial.flush();

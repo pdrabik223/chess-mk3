@@ -1,6 +1,7 @@
+import time
 from Board import Board
 from set_up_connection import set_up_serial_connection
-
+import subprocess
 
 class SimulateGameTestCase:
     def __init__(
@@ -36,7 +37,7 @@ class SimulateGameTestCase:
                 param_dict[test_params[i]] = test_params[i+1]
             except Exception:
                 pass
-        print(param_dict)
+        # print(param_dict)
 
         board = Board()
         board.parse_board(param_dict['board'])
@@ -67,24 +68,25 @@ class SimulateGameTestCase:
             starting_positions=starting_positions,
             moves=moves,
         )
-
-
 if __name__ == "__main__":
 
-    device = set_up_serial_connection()
+    # device = set_up_serial_connection()
+    # device = open("some_file.txt", 'rb')
     buffer = ""
+    chess_engine_proc = subprocess.Popen([r"C:\Users\piotr\Documents\chess-mk3\chess_board\Debug\ChessEngineMk3.exe"], stdout=subprocess.PIPE)
+    
     while True:
-        resp: bytes = device.readline()
-        # print(resp)
-        # f.writelines(resp.decode("utf-8"))
-        try:
-            if "iteration_end" in resp.decode("utf-8"):
-                buffer = buffer + resp.decode("utf-8")
-                test_example = SimulateGameTestCase.parse_string(buffer)
-                test_example.board.display_using_unicode_minimalistic(use_class_variables=True)
-                buffer = ""
-            else:
-                buffer = buffer + resp.decode("utf-8")
-            pass
-        except Exception as ex:
-            print("error:", str(ex), "raw:", resp, "decoded:", resp.decode("utf-8"))
+        for line in chess_engine_proc.stdout:
+            resp = line.decode()
+            try:
+                if "iteration_end" in str(resp):
+                    buffer = buffer + resp
+                    test_example = SimulateGameTestCase.parse_string(buffer)
+                    test_example.board.display_using_unicode_minimalistic(use_class_variables=True)
+                    # time.sleep(1)  # import time
+                    buffer = ""
+                else:
+                    buffer = buffer + resp
+                pass
+            except Exception as ex:
+                print("error:", str(ex), "raw:", resp, "decoded:", resp)

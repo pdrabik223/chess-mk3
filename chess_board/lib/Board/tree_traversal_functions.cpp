@@ -1,6 +1,24 @@
 #include <Board.h>
+#ifndef max
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#endif
 
-void Board::estimate_all_moves_for_color_a(const int8_t depth, Color color, MoveSet &moves, int16_t *estimations)
+#ifndef min
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
+/// Some really dogy stuff
+#define MAKE_A_MOVE(function_call)            \
+    from = data[starting_position];           \
+    to = data[target_position];               \
+                                              \
+    move(starting_position, target_position); \
+    function_call;                            \
+                                              \
+    data[starting_position] = from;           \
+    data[target_position] = to
+
+void Board::estimate_all_moves_for_color(const int8_t depth, Color color, MoveSet &moves, int16_t *estimations)
 {
     if (color == white)
         color = black;
@@ -17,19 +35,11 @@ void Board::estimate_all_moves_for_color_a(const int8_t depth, Color color, Move
     {
         moves.next(starting_position, target_position);
 
-        from = data[starting_position];
-        to = data[target_position];
-
-        move(starting_position, target_position);
-
-        estimations[i] = alpha_beta(depth, -20000, 20000, color);
+        MAKE_A_MOVE(estimations[i] = alpha_beta(depth, -20000, 20000, color));
         // estimations[i] = min_max(depth, color);
         // estimations[i] = pvs(depth, -20000, 20000, color);
         // estimations[i] = nega_scout(depth, -20000, 20000, color);
-        // estimations[i] = null_move_alpha_beta(depth, -20000, 20000, color);
-
-        data[starting_position] = from;
-        data[target_position] = to;
+        // MAKE_A_MOVE(estimations[i] = null_move_alpha_beta(depth, -20000, 20000, color));
     }
 }
 
@@ -50,32 +60,14 @@ void Board::estimate_all_moves_for_color_b(const int8_t depth, Color color, Move
     {
         moves.next(starting_position, target_position);
 
-        from = data[starting_position];
-        to = data[target_position];
-
-        move(starting_position, target_position);
-
-        estimations[i] = alpha_beta(depth, -20000, 20000, color);
+        // MAKE_A_MOVE(estimations[i] = alpha_beta(depth, -20000, 20000, color));
+        MAKE_A_MOVE(estimations[i] = alpha_beta_q_search(depth, -20000, 20000, color));
         // estimations[i] = min_max(depth, color);
         // estimations[i] = pvs(depth, -20000, 20000, color);
         // estimations[i] = nega_scout(depth, -20000, 20000, color);
-        // estimations[i] = null_move_alpha_beta(depth, -20000, 20000, color);
-
-        data[starting_position] = from;
-        data[target_position] = to;
+        // MAKE_A_MOVE(estimations[i] = null_move_alpha_beta(depth, -20000, 20000, color));
     }
 }
-
-/// Some really dogy stuff
-#define MAKE_A_MOVE(function_call)            \
-    from = data[starting_position];           \
-    to = data[target_position];               \
-                                              \
-    move(starting_position, target_position); \
-    function_call;                            \
-                                              \
-    data[starting_position] = from;           \
-    data[target_position] = to
 
 int16_t Board::min_max(const int8_t depth, const Color player_color)
 {
@@ -137,6 +129,70 @@ int16_t Board::alpha_beta(const int8_t depth, int16_t alpha, int16_t beta, const
     if (depth <= 0)
         // return q_search(depth + 1, alpha, beta, player_color);
         return estimate_position();
+
+    if (!check_for_white_king())
+        return weight_encoding[b_king];
+
+    if (!check_for_black_king())
+        return weight_encoding[w_king];
+
+    MoveSet moves;
+
+    generate_legal_moveset_for_color(player_color, moves);
+
+    int8_t starting_position;
+    Piece from;
+
+    int8_t target_position;
+    Piece to;
+
+    if (player_color == white)
+    {
+        if (moves.size == 0)
+            return weight_encoding[b_king];
+
+        int16_t result = weight_encoding[b_king];
+
+        for (int8_t i = 0; i < moves.size; i++)
+        {
+            moves.next(starting_position, target_position);
+
+            MAKE_A_MOVE(result = max(result, alpha_beta(depth - 1, alpha, beta, black)));
+
+            if (result >= beta)
+                break;
+            alpha = max(alpha, result);
+        }
+        return result;
+    }
+    else
+    {
+        if (moves.size == 0)
+            return weight_encoding[w_king];
+
+        int16_t result = weight_encoding[w_king];
+
+        for (int8_t i = 0; i < moves.size; i++)
+        {
+
+            moves.next(starting_position, target_position);
+
+            MAKE_A_MOVE(result = min(result, alpha_beta(depth - 1, alpha, beta, white)));
+
+            if (result <= alpha)
+                break;
+            beta = min(beta, result);
+        }
+        return result;
+    }
+}
+
+int16_t Board::alpha_beta_q_search(const int8_t depth, int16_t alpha, int16_t beta, const Color player_color)
+{
+
+    if (depth <= 0)
+        return q_search(depth + 1, alpha, beta, player_color);
+    // return estimate_position();
 
     if (!check_for_white_king())
         return weight_encoding[b_king];
