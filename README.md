@@ -23,6 +23,17 @@ With this project I would like to do something different: restrain myself as muc
 - No online guides, to the reasonable degree obviously
   
 
+## Configure for x64
+```s
+cd chess_board 
+cmake -B buildx64 
+```
+## build for x64
+
+```s
+
+cmake --build buildx64 
+```
 
 ## Parts
 [Hall sensors](https://allegro.pl/oferta/czujnik-halla-a3144-wykrywacz-metali-prad-13664145165)
