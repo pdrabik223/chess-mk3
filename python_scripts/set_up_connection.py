@@ -15,8 +15,8 @@ def set_up_serial_connection():
         print(f"\t port: '{port}', desc: '{desc}', hwid: '{hwid}")
         if "USB Serial Device" in desc:
             device = Serial(port=port, baudrate=baudrate, timeout=timeout)
-            print("connected to device on port:",port)
-            
+            print("connected to device on port:", port)
+
             break
 
     return device

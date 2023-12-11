@@ -70,37 +70,37 @@ const int8_t king_placement_weight_matrix[64]{0, 0, 0, 0, 0, 0, 0, 0,
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_rook(const Piece *data, const int8_t pos);
+void generate_no_legal_moves_rook(const Piece *data, const int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves);
 
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_pawn(const Piece *data, const int8_t pos);
+void generate_no_legal_moves_pawn(const Piece *data, const int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves);
 
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos);
+void generate_no_legal_moves_knight(const Piece *data, int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves);
 
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_king(const Piece *data, const int8_t pos);
+void generate_no_legal_moves_king(const Piece *data, const int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves);
 
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_bishop(const Piece *data, const int8_t pos);
+void generate_no_legal_moves_bishop(const Piece *data, const int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves);
 
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_queen(const Piece *data, const int8_t pos);
+void generate_no_legal_moves_queen(const Piece *data, const int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves);
 
 class Board
 {

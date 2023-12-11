@@ -188,7 +188,7 @@ int16_t Board::estimate_position() const
     // instead of implementing logic with a lot of comparions
     // jump table can be created, that can be indexed with pawn type
 
-    uint16_t (*table[])(const Piece *, const int8_t){
+    void (*table[])(const Piece *, const int8_t, uint8_t &, uint8_t &, uint8_t &){
         generate_no_legal_moves_pawn,
         generate_no_legal_moves_knight,
         generate_no_legal_moves_bishop,
@@ -211,16 +211,18 @@ int16_t Board::estimate_position() const
         if (data[i] != empty)
         {
             estimation += weight_encoding[data[i]];
-
+            uint8_t no_legal_moves = 0, no_killing_moves = 0, no_defending_moves = 0;
             int8_t index = data[i] - 1;
             if (get_color(data[i]) == black)
             {
                 index -= 6;
-                estimation -= 10 * table[index](data, i) - placement_weight[index][63 - i];
+                table[index](data, i, no_legal_moves, no_killing_moves, no_defending_moves);
+                estimation -= 5 * no_legal_moves - 20 * no_killing_moves - 20 * no_defending_moves - placement_weight[index][63 - i];
             }
             else
             {
-                estimation += 10 * table[index](data, i) + placement_weight[index][i];
+                table[index](data, i, no_legal_moves, no_killing_moves, no_defending_moves);
+                estimation += 5 * no_legal_moves + 20 * no_killing_moves + 20 * no_defending_moves + placement_weight[index][i];
             }
         }
     }

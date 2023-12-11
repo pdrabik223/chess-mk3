@@ -25,10 +25,8 @@
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_rook(const Piece *data, const int8_t pos)
+void generate_no_legal_moves_rook(const Piece *data, const int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves)
 {
-
-    uint16_t number_of_moves = 0;
     Color rook_color = get_color(data[pos]);
     int8_t pos_x = pos / 8;
     int8_t pos_y = pos % 8;
@@ -40,68 +38,77 @@ uint16_t generate_no_legal_moves_rook(const Piece *data, const int8_t pos)
         // going down starting with position just under the rook
         new_pos = Board::construct_coord(x, pos_y);
         if (data[new_pos] == empty)
-            number_of_moves++;
+            no_legal_moves++;
         else if (get_color(data[new_pos]) != rook_color)
         {
-            number_of_moves++;
+            no_killing_moves++;
             break;
         }
         else
+        {
+            no_defending_moves++;
             break;
+        }
     }
     for (int8_t x = pos_x - 1; x >= 0; x--)
     {
         // going up starting with position just above the rook
         new_pos = Board::construct_coord(x, pos_y);
         if (data[new_pos] == empty)
-            number_of_moves++;
+            no_legal_moves++;
         else if (get_color(data[new_pos]) != rook_color)
         {
-            number_of_moves++;
+            no_killing_moves++;
             break;
         }
         else
+        {
+            no_defending_moves++;
             break;
+        }
     }
     for (int8_t y = pos_y + 1; y < 8; y++)
     {
         // going right starting with position just to the right from the rook
         new_pos = Board::construct_coord(pos_x, y);
         if (data[new_pos] == empty)
-            number_of_moves++;
+            no_legal_moves++;
         else if (get_color(data[new_pos]) != rook_color)
         {
-            number_of_moves++;
+            no_killing_moves++;
             break;
         }
         else
+        {
+            no_defending_moves++;
             break;
+        }
     }
     for (int8_t y = pos_y - 1; y >= 0; y--)
     {
         // going left starting with position just to the left from the rook
         new_pos = Board::construct_coord(pos_x, y);
         if (data[new_pos] == empty)
-            number_of_moves++;
+            no_legal_moves++;
         else if (get_color(data[new_pos]) != rook_color)
         {
-            number_of_moves++;
+            no_killing_moves++;
             break;
         }
         else
+        {
+            no_defending_moves++;
             break;
+        }
     }
-
-    return number_of_moves;
 }
 
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_pawn(const Piece *data, const int8_t pos)
+void generate_no_legal_moves_pawn(const Piece *data, const int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves)
 {
-    uint16_t number_of_moves = 0;
     Color pawn_color = get_color(data[pos]);
 
     int8_t pos_x = pos / 8;
@@ -113,22 +120,25 @@ uint16_t generate_no_legal_moves_pawn(const Piece *data, const int8_t pos)
 
         if (pos_x == 1)
             if (data[pos + 16] == empty && data[pos + 8] == empty)
-                number_of_moves++;
+                no_legal_moves++;
 
         if (pos_x + 1 < 8)
         {
             if (data[pos + 8] == empty)
-                number_of_moves++;
+                no_legal_moves++;
 
             if (pos_y - 1 >= 0)
                 // if pawn is not on the left edge of the chessboard
                 if (is_white(data[pos + 7]))
-                    number_of_moves++;
-
+                    no_killing_moves++;
+                else if (is_black(data[pos + 7]))
+                    no_defending_moves++;
             if (pos_y + 1 < 8)
                 // if pawn is not on the right edge of the chessboard
                 if (is_white(data[pos + 9]))
-                    number_of_moves++;
+                    no_killing_moves++;
+                else if (is_black(data[pos + 9]))
+                    no_defending_moves++;
         }
     }
     else
@@ -136,36 +146,37 @@ uint16_t generate_no_legal_moves_pawn(const Piece *data, const int8_t pos)
         // white is on the bottom, and goes up
         if (pos_x == 6)
             if (data[pos - 16] == empty && data[pos - 8] == empty)
-                number_of_moves++;
+                no_legal_moves++;
 
         if (pos_x - 1 >= 0)
         {
             if (data[pos - 8] == empty)
-                number_of_moves++;
+                no_legal_moves++;
 
             if (pos_y - 1 >= 0)
                 // if pawn is not on the left edge of the chessboard
                 if (is_black(data[pos - 9]))
-                    number_of_moves++;
+                    no_killing_moves++;
+                else if (is_white(data[pos - 9]))
+                    no_defending_moves++;
 
             if (pos_y + 1 < 8)
                 // if pawn is not on the right edge of the chessboard
                 if (is_black(data[pos - 7]))
-                    number_of_moves++;
+                    no_killing_moves++;
+                else if (is_white(data[pos - 7]))
+                    no_defending_moves++;
         }
     }
-
-    return number_of_moves;
 }
 
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
+void generate_no_legal_moves_knight(const Piece *data, int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves)
 {
 
-    uint16_t number_of_moves = 0;
     Color knight_color = get_color(data[pos]);
     int8_t new_pos;
     switch (pos)
@@ -188,11 +199,20 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   X
         //  O X
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
+
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 1:
         //  O O
@@ -201,14 +221,26 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   X
         //  X X
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 2:
     case 3:
@@ -220,17 +252,33 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // X   X
         //  X X
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 6:
         //  O O
@@ -239,14 +287,26 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // X   O
         //  X X
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         break;
     case TOP_RIGHT:
@@ -256,11 +316,19 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // X   O
         //  X O
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
 
     case 8:
@@ -270,14 +338,26 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   X
         //  O X
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         break;
     case 16:
@@ -290,17 +370,33 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   X
         //  O X
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 48:
         //  O X
@@ -309,14 +405,26 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   X
         //  O O
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 15:
         //  O O
@@ -326,16 +434,28 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         //  X O
 
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
 
     case 23:
@@ -349,20 +469,36 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         //  X O
 
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 55:
         //  X O
@@ -372,16 +508,28 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         //  O O
 
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         break;
     case BOTTOM_LEFT:
@@ -391,11 +539,19 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   O
         //  O O
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 57:
         //  X X
@@ -404,14 +560,26 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   O
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 58:
     case 59:
@@ -423,17 +591,33 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   O
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 62:
         //  X X
@@ -442,14 +626,26 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   O
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case BOTTOM_RIGHT:
         //  X O
@@ -458,12 +654,20 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   O
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         break;
 
@@ -475,17 +679,33 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   X
         //  X X
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 10:
     case 11:
@@ -497,23 +717,47 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // X   X
         //  X X
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case AL_TOP_RIGHT:
         //  O O
@@ -522,17 +766,33 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // X   O
         //  X X
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 22:
     case 30:
@@ -545,23 +805,47 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         //  X X
 
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
 
     case 17:
@@ -574,23 +858,47 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   X
         //  X X
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         break;
     case AL_BOTTOM_LEFT:
@@ -600,17 +908,33 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // O   X
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case 50:
     case 51:
@@ -622,23 +946,47 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // X   X
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     case AL_BOTTOM_RIGHT:
         //  X X
@@ -647,17 +995,33 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         // X   O
         //  O O
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         break;
     default:
@@ -668,48 +1032,78 @@ uint16_t generate_no_legal_moves_knight(const Piece *data, int8_t pos)
         //  X X
 
         new_pos = pos - 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos - 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos - 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos + 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos + 17;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos + 15;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos + 6;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos - 10;
-        if (get_color(data[new_pos]) != knight_color)
-            ++number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == knight_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         break;
     }
-    return number_of_moves;
 }
 
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_king(const Piece *data, const int8_t pos)
+void generate_no_legal_moves_king(const Piece *data, const int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves)
 {
-    uint16_t number_of_moves = 0;
     Color king_color = get_color(data[pos]);
 
     // int8_t pos_x = pos / 8;
@@ -723,15 +1117,27 @@ uint16_t generate_no_legal_moves_king(const Piece *data, const int8_t pos)
         // OKX
         // OXX
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
+
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 9;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-        return number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
     case 1:
     case 2:
     case 3:
@@ -742,36 +1148,66 @@ uint16_t generate_no_legal_moves_king(const Piece *data, const int8_t pos)
         // XKX
         // XXX
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 7;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 9;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-        return number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
     case 7:
         // OOO
         // XKO
         // XXO
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
         new_pos = pos + 7;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-        return number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
     case 8:
     case 16:
@@ -784,21 +1220,40 @@ uint16_t generate_no_legal_moves_king(const Piece *data, const int8_t pos)
         // OXX
 
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 7;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 9;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-        return number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
     case 15:
     case 23:
     case 31:
@@ -809,35 +1264,66 @@ uint16_t generate_no_legal_moves_king(const Piece *data, const int8_t pos)
         // XKO
         // XXO
         new_pos = pos - 9;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 7;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
     case 56:
         // OXX
         // OKX
         // OOO
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 7;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-        return number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
     case 57:
     case 58:
@@ -849,66 +1335,127 @@ uint16_t generate_no_legal_moves_king(const Piece *data, const int8_t pos)
         // XKX
         // OOO
         new_pos = pos - 9;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 7;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-        return number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
 
     case 63:
         // XXO
         // XKO
         // OOO
         new_pos = pos - 9;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-        return number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
     default:
         // XXX
         // XKX
         // XXX
 
         new_pos = pos - 9;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 7;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos - 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 1;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 7;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 8;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
         new_pos = pos + 9;
-        if (get_color(data[new_pos]) != king_color)
-            number_of_moves++;
-        return number_of_moves;
+        if (data[new_pos] == empty)
+            ++no_legal_moves;
+        else if (get_color(data[new_pos]) == king_color)
+            ++no_defending_moves;
+        else
+            ++no_killing_moves;
     }
 }
 
@@ -916,9 +1463,8 @@ uint16_t generate_no_legal_moves_king(const Piece *data, const int8_t pos)
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_bishop(const Piece *data, const int8_t pos)
+void generate_no_legal_moves_bishop(const Piece *data, const int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves)
 {
-    uint16_t number_of_moves = 0;
     Color bishop_color = get_color(data[pos]);
 
     int8_t pos_x = pos / 8;
@@ -930,73 +1476,78 @@ uint16_t generate_no_legal_moves_bishop(const Piece *data, const int8_t pos)
         // going down and right starting with position just to the right and down from the bishop
         new_pos = Board::construct_coord(x, y);
         if (data[new_pos] == empty)
-            number_of_moves++;
+            no_legal_moves++;
         else if (get_color(data[new_pos]) != bishop_color)
         {
-            number_of_moves++;
+            no_killing_moves++;
             break;
         }
         else
+        {
+            no_defending_moves++;
             break;
+        }
     }
     for (int8_t x = pos_x + 1, y = pos_y - 1; x < 8 && y >= 0; x++, y--)
     {
         // going down and left starting with position just to the left and down from the bishop
         new_pos = Board::construct_coord(x, y);
         if (data[new_pos] == empty)
-            number_of_moves++;
+            no_legal_moves++;
         else if (get_color(data[new_pos]) != bishop_color)
         {
-            number_of_moves++;
+            no_killing_moves++;
             break;
         }
         else
+        {
+            no_defending_moves++;
             break;
+        }
     }
     for (int8_t x = pos_x - 1, y = pos_y - 1; x >= 0 && y >= 0; x--, y--)
     {
         // going up and left starting with position just to the left and up from the bishop
         new_pos = Board::construct_coord(x, y);
         if (data[new_pos] == empty)
-            number_of_moves++;
+            no_legal_moves++;
         else if (get_color(data[new_pos]) != bishop_color)
         {
-            number_of_moves++;
+            no_killing_moves++;
             break;
         }
         else
+        {
+            no_defending_moves++;
             break;
+        }
     }
     for (int8_t x = pos_x - 1, y = pos_y + 1; x >= 0 && y < 8; x--, y++)
     {
         // going up and right starting with position just to the right and up from the bishop
         new_pos = Board::construct_coord(x, y);
         if (data[new_pos] == empty)
-            number_of_moves++;
+            no_legal_moves++;
         else if (get_color(data[new_pos]) != bishop_color)
         {
-            number_of_moves++;
+            no_killing_moves++;
             break;
         }
         else
+        {
+            no_defending_moves++;
             break;
+        }
     }
-
-    return number_of_moves;
 }
 
 /// @brief generates noumber of legal moves for a pawn at position 'pos'
 /// @param pos defines for witch pawn moveset should be calculated
 /// @param number_of_moves noumber of moves already present in moveset array
 /// @return Number of legal moves
-uint16_t generate_no_legal_moves_queen(const Piece *data, const int8_t pos)
+void generate_no_legal_moves_queen(const Piece *data, const int8_t pos, uint8_t &no_legal_moves, uint8_t &no_killing_moves, uint8_t &no_defending_moves)
 {
-    uint16_t number_of_moves = 0;
     //  queen is basically rook & bishop at once, so why even bother?
-    number_of_moves = generate_no_legal_moves_rook(data, pos);
-    number_of_moves += generate_no_legal_moves_bishop(data, pos);
-
-    return number_of_moves;
+    generate_no_legal_moves_rook(data, pos, no_legal_moves, no_killing_moves, no_defending_moves);
+    generate_no_legal_moves_bishop(data, pos, no_legal_moves, no_killing_moves, no_defending_moves);
 }
-
-

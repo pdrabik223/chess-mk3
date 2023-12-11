@@ -50,7 +50,21 @@ unicode_symbol_encoding = [
     "♛ ",
     "♚ ",
 ]
-
+unicode_symbol_encoding_all_black = [
+    "  ",
+    "♟︎ ",
+    "♞ ",
+    "♝ ",
+    "♜ ",
+    "♛ ",
+    "♚ ",
+    "♟︎ ",
+    "♞ ",
+    "♝ ",
+    "♜ ",
+    "♛ ",
+    "♚ ",
+]
 ascii_to_piece_encoding = {
     "e": Piece.empty,
     "p": Piece.w_pawn,
@@ -77,7 +91,7 @@ class Board:
         self.color_to_move = ""
         self.moving_from = 0
         self.moving_to = 0
-        
+
     def display_using_unicode(self):
         starting_positions_highlight_color = Back.GREEN
         moves_highlight_color = Back.YELLOW
@@ -106,19 +120,23 @@ class Board:
                 background_color = moves_highlight_color + moves_highlight_color
             if self.color_to_move == "white":
                 if id in self.moves or id in self.starting_positions:
-                    id_of_best_move = self.moves_estimation.index(max(self.moves_estimation))
-                    if id == self.moves[id_of_best_move] :
+                    id_of_best_move = self.moves_estimation.index(
+                        max(self.moves_estimation)
+                    )
+                    if id == self.moves[id_of_best_move]:
                         background_color = best_move_color + best_move_color
-                    if  id == self.starting_positions[id_of_best_move]:
-                        background_color = best_move_start_color+best_move_start_color
-                        
+                    if id == self.starting_positions[id_of_best_move]:
+                        background_color = best_move_start_color + best_move_start_color
+
             elif self.color_to_move == "black":
                 if id in self.moves or id in self.starting_positions:
-                    id_of_best_move = self.moves_estimation.index(min(self.moves_estimation))
-                    if id == self.moves[id_of_best_move] :
-                        x = best_move_color + best_move_color
-                    if  id == self.starting_positions[id_of_best_move]:
-                        background_color = best_move_start_color+best_move_start_color
+                    id_of_best_move = self.moves_estimation.index(
+                        min(self.moves_estimation)
+                    )
+                    if id == self.moves[id_of_best_move]:
+                        best_move_color + best_move_color
+                    if id == self.starting_positions[id_of_best_move]:
+                        background_color = best_move_start_color + best_move_start_color
 
             if to_8_counter == 7:
                 endline = "\n"
@@ -146,44 +164,55 @@ class Board:
 
         print(final_string)
 
-    def display_using_unicode_minimalistic(self, from_pos:int = None, to_pos:int= None, use_class_variables:bool = False):
-        
+    def display_using_unicode_minimalistic(
+        self,
+        from_pos: int = None,
+        to_pos: int = None,
+        use_class_variables: bool = False,
+    ):
         if use_class_variables:
             from_pos = self.moving_from
             to_pos = self.moving_to
-        
+
         to_8_counter = 0
         to_2_counter = 0
         final_string = ""
         for id, piece in enumerate(self.data):
-            
             if to_2_counter % 2 == 0:
-                background_color = Back.LIGHTBLACK_EX + Back.LIGHTBLACK_EX
-                text_color =Fore.WHITE + Fore.WHITE
-            else:
-                background_color = Back.BLACK + Back.BLACK
-                text_color =Fore.WHITE + Fore.WHITE
-                
-            if id == from_pos:
-                background_color = Back.GREEN + Back.GREEN
-            if id == to_pos:    
-                background_color = Back.RED + Back.RED
+                background_color = Back.LIGHTBLACK_EX
 
-            if to_8_counter%8 == 7:
+                if id == from_pos:
+                    background_color = Back.LIGHTYELLOW_EX
+                if id == to_pos:
+                    background_color = Back.LIGHTYELLOW_EX
+            else:
+                background_color = Back.BLACK
+
+                if id == from_pos:
+                    background_color = Back.YELLOW
+                if id == to_pos:
+                    background_color = Back.YELLOW
+
+            if piece.value <= Piece.w_king.value:
+                text_color = Fore.WHITE
+            else:
+                text_color = Fore.RED
+
+            if to_8_counter % 8 == 7:
                 endline = "\n"
             else:
                 to_2_counter += 1
                 endline = ""
-          
+
             final_string += (
                 background_color
-                +text_color
-                + unicode_symbol_encoding[piece.value]
+                + text_color
+                + unicode_symbol_encoding_all_black[piece.value]
                 + Style.RESET_ALL
                 + endline
             )
             to_8_counter += 1
-            
+
         print(final_string)
 
     def add_random_move(self):

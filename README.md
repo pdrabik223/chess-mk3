@@ -26,7 +26,7 @@ With this project I would like to do something different: restrain myself as muc
 ## Configure for x64
 ```s
 cd chess_board 
-cmake -B buildx64 
+cmake -B buildx64
 ```
 ## build for x64
 
